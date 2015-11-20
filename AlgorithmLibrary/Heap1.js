@@ -126,9 +126,6 @@ Heap.prototype.addControls =  function() //Inserts elements in diplay and sets c
 	this.clearHeapButton = addControlToAlgorithmBar("Button", "Clear Heap");
 	this.clearHeapButton.onclick = this.clearCallback.bind(this);
 
-	//STUDENT
-	addCheckboxToAlgorithmBar("STUDENT");
-
 }
 
 Heap.prototype.newArrayCallback = function(event)
@@ -690,22 +687,24 @@ function HeapNode(val, id, initialX, initialY)
 
 Heap.prototype.disableUI = function(event)
 {
-	// this.insertField.disabled = true;
-	// this.insertIndex.disabled = true;
-	// this.insertButton.disabled = true;
-	// this.removeSmallestButton.disabled = true;
-	// this.clearHeapButton.disabled = true;
-	// this.buildHeapButton.disabled = true;
+	this.insertField.disabled = true;
+	this.insertIndex.disabled = true;
+	this.insertButton.disabled = true;
+	this.removeSmallestButton.disabled = true;
+	this.clearHeapButton.disabled = true;
+	this.buildHeapButton.disabled = true;
+	this.heapifyButton.disabled = true;
 }
 
 Heap.prototype.enableUI = function(event)
 {
-	// this.insertField.disabled = false;
-	// this.insertIndex.disabled = false;
-	// this.insertButton.disabled = false;
-	// this.removeSmallestButton.disabled = false;
-	// this.clearHeapButton.disabled = false;
-	// this.buildHeapButton.disabled = false;
+	this.insertField.disabled = false;
+	this.insertIndex.disabled = false;
+	this.insertButton.disabled = false;
+	this.removeSmallestButton.disabled = false;
+	this.clearHeapButton.disabled = false;
+	this.buildHeapButton.disabled = false;
+	this.heapifyButton.disabled = false;
 }
 
 Heap.prototype.moveLeft = function()
@@ -809,7 +808,6 @@ function init()
 	var animManag = initCanvas();
 	currentAlg = new Heap(animManag, canvas.width, canvas.height);
 	currentHighlightNode  = currentAlg.treeRoot;
-	// ArrayData = currentAlg.arrayData;
     initCommands = currentAlg.commands;
 
     addEventsToNode(animManag);
@@ -831,7 +829,6 @@ function addEventsToNode(animManag){
         //event.preventDefault();
         var x = event.pageX - cLeft,
             y = event.pageY - cTop;
-        console.log('x:'+x+' y:'+y)
         var ctxMenu = document.getElementById("menuSimple");
         // Collision detection between clicked offset and element.
         var cli = true;
@@ -908,4 +905,23 @@ Heap.prototype.setIndexHighlight = function(index, highlightVal)
 	// this.cmd("SetHighlight", this.circleObjs[index], highlightVal);
 	this.cmd("SetHighlight", this.heapStructure[index].graphicID, highlightVal);
 	this.cmd("SetHighlight", this.arrayRects[index], highlightVal);
+}
+
+Heap.prototype.rename = function(index, value)
+{
+	index += 1
+
+	// console.log('swapping index '+index1+' and '+index2);
+	this.cmd("SetText", this.arrayRects[index], "");
+	// this.cmd("SetText", this.circleObjs[index1], "");
+	this.cmd("SetText", this.heapStructure[index].graphicID, "");
+	// this.cmd("SetText", this.circleObjs[index2], "");
+	
+	this.arrayData[index] = parseInt(value);
+	this.heapStructure[index].data = parseInt(value);
+
+	this.cmd("Step")
+	this.cmd("SetText", this.arrayRects[index], this.arrayData[index]);
+	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
+	this.cmd("SetText", this.heapStructure[index].graphicID, this.arrayData[index]);
 }
