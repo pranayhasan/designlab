@@ -1,0 +1,12 @@
+
+Features:
+
+
+* Scrollable data structure image
+* Create class for data structure operations(and response like color changes to those operations). Crawl the expose functions, put them in buttons
+
+* interface for adding code for finding answers of the problems asked.
+* Scrollable display for moves done, along with reset and remove latest move.
+
+
+* index and save quizzes, so that later they might be revisited 

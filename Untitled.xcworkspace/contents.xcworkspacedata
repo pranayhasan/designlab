@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:OperationsMenu.js">
+   </FileRef>
+   <FileRef
+      location = "group:design">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimatedBTreeNode.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimatedCircle.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimatedLabel.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimatedLinkedList.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimatedObject.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimatedRectangle.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/AnimationMain.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/CustomEvents.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/HighlightCircle.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/Line.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/ObjectManager.js">
+   </FileRef>
+   <FileRef
+      location = "group:AnimationLibrary/UndoFunctions.js">
+   </FileRef>
+   <FileRef
+      location = "group:AlgorithmLibrary/Algorithm.js">
+   </FileRef>
+   <FileRef
+      location = "group:AlgorithmLibrary/BST_1.js">
+   </FileRef>
+   <FileRef
+      location = "group:AlgorithmLibrary/BST.js">
+   </FileRef>
+   <FileRef
+      location = "group:BST.html">
+   </FileRef>
+   <FileRef
+      location = "group:visualizationPageStyle.css">
+   </FileRef>
+   <FileRef
+      location = "group:visualPages.css">
+   </FileRef>
+   <FileRef
+      location = "group:code.html">
+   </FileRef>
+</Workspace>

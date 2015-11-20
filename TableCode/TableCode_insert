@@ -1,0 +1,30 @@
+<tr><td>
+<button id="Insert" href onclick="insertElementBST();">Insert</button>
+    <script>
+    function insertElementBST(){
+
+        var numberToInsert = BSTUtils.inputNumber();
+        BSTUtils.clearCanvas();
+
+        currentAlg.insertElement(numberToInsert,true);
+        currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+        currentAlg.animationManager.skipForward();
+        currentAlg.animationManager.clearHistory();
+    }
+    </script>
+    </td></tr>
+<tr><td>
+
+<button id="Delete" href onclick="deleteElementBST();">Delete</button>
+    <script>
+    function deleteElementBST(){
+
+        var numberToDelete = BSTUtils.inputNumber();
+        BSTUtils.clearCanvas();
+
+        currentAlg.deleteElement(numberToDelete);
+        currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+        currentAlg.animationManager.skipForward();
+        currentAlg.animationManager.clearHistory();
+    }
+    </script>

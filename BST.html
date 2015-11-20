@@ -1,0 +1,437 @@
+<html>
+<head>
+
+    <title>
+        Binary Search Tree Visualization
+    </title>
+
+    <!-- css sheet for how the page is laid out -->
+
+    <!-- <link rel="stylesheet" href="visualizationPageStyle.css">
+
+
+     jqueury stuff.  Only used for the animation speed slider. -->
+
+
+
+    <link rel="stylesheet" href="ThirdParty/jquery-ui-1.8.11.custom.css">
+
+    <script src="ThirdParty/jquery-1.5.2.min.js"></script>
+    <script src="ThirdParty/jquery-ui-1.8.11.custom.min.js"></script>
+
+    <!-- Javascript for the actual visualization code -->
+    <script type = "application/javascript" src = "AnimationLibrary/CustomEvents.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/UndoFunctions.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/AnimatedObject.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/AnimatedLabel.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/AnimatedCircle.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/AnimatedRectangle.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/AnimatedLinkedList.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/HighlightCircle.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/Line.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/ObjectManager.js"> </script>
+    <script type = "application/javascript" src = "AnimationLibrary/AnimationMain.js"> </script>
+    <script type = "application/javascript" src = "AlgorithmLibrary/Algorithm.js"> </script>
+    <script type = "application/javascript" src = "AlgorithmLibrary/BST.js"> </script>
+    <script type = "application/javascript" src = "AlgorithmLibrary/StateChecker.js"> </script>
+    <script type = "application/javascript" src = "AlgorithmLibrary/Record.js"> </script>
+    <script type = "application/javascript" src = "AlgorithmLibrary/BST/BSTRecord.js"> </script>
+    <script type = "application/javascript" src = "AlgorithmLibrary/BST/UndoBSTRecord.js"> </script>
+    <script type = "application/javascript" src = "BSTUtils.js"> </script>
+    <script type = "application/javascript" src = "Scheme.js"> </script>
+
+    <link rel="stylesheet" type="text/css" href="menu.css" />
+    <link rel="stylesheet" type="text/css" href="radio.css" />
+
+</head>
+
+<body onload="init();" class="VisualizationMainPage">
+
+<div id = "container">
+
+    <div id="header">
+        <h1>Binary Search Tree</h1>
+    </div>
+
+
+
+    <div class="tabs_holder" style="display: none">
+        <ul>
+            <a id="insertOperation" href="#" onclick="insertOperation();return false;" style="width:100%">Insert Operations</a>
+            <script>
+                function insertOperation(){
+                    document.getElementById("AlgorithmSpecificControls_insert").style.display = "block";
+                    document.getElementById("AlgorithmSpecificControls_delete").style.display = "none";
+                    document.getElementById("AlgorithmSpecificControls_search").style.display = "none";
+                }
+            </script>
+            <br>
+            <a id="deleteOperation" href="#" onclick="deleteOperation();return false;" style="width:100%">Delete Operations</a>
+            <script>
+                function deleteOperation(){
+                    document.getElementById("AlgorithmSpecificControls_insert").style.display = "none";
+                    document.getElementById("AlgorithmSpecificControls_delete").style.display = "block";
+                    document.getElementById("AlgorithmSpecificControls_search").style.display = "none";
+                }
+            </script>
+
+            <br>
+            <a id="searchOperation" href="#" onclick="searchOperation();return false;" style="width:100%">Search Operations</a>
+            <script>
+                function searchOperation(){
+                    document.getElementById("AlgorithmSpecificControls_insert").style.display = "none";
+                    document.getElementById("AlgorithmSpecificControls_delete").style.display = "none";
+                    document.getElementById("AlgorithmSpecificControls_search").style.display = "block";
+                }
+            </script>
+
+
+        </ul>
+    </div>
+
+    <div id = "mainContent">
+
+        <div id = "algoControlSection">
+            <!-- Table for buttons to control specific animation (insert/find/etc) -->
+            <!-- (filled in by javascript code specific to the animtion) -->
+            <table border="1" id="AlgorithmSpecificControls_insert" style="display: none">
+
+                <tr><td>
+                    <button id="Reset1" href onclick="Reset1();" style="width:100%">Reset</button>
+                    <script>
+                        function Reset1(){
+
+                            currentAlg.deleteAllElements(currentAlg.treeRoot);
+                            currentAlg.commands = [];
+                            BSTUtils.clearCanvas();
+                            BSTUtils.redrawImage();
+
+                            currentAlg.commands = currentAlg.initCommands;
+                            BSTUtils.clearCanvas();
+                            //alert(currentAlg.commands);
+                            BSTUtils.redrawImage();
+                        }
+                    </script>
+                </td></tr>
+
+                <tr><td>
+                    <button id="MoveLeft" href onclick="moveLeftBST();" style="width:100%">Move Left</button>
+                    <script>
+                        function moveLeftBST(){
+                            currentAlg.addStep("L");
+                            BSTUtils.clearCanvas();
+                            currentAlg.moveLeft();
+                            BSTUtils.redrawImage();
+                            document.getElementById("menuSimple").style.display = "none";
+
+                        }
+                    </script>
+                </td></tr>
+
+                <tr><td>
+                    <button id="MoveRight" href onclick="moveRightBST();" style="width:100%">Move Right</button>
+                    <script>
+                        function moveRightBST(){
+                            currentAlg.addStep("R");
+                            BSTUtils.clearCanvas();
+                            currentAlg.moveRight();
+                            BSTUtils.redrawImage();
+                            document.getElementById("menuSimple").style.display = "none";
+
+                        }
+                    </script>
+                </td></tr>
+
+                <tr><td>
+                    <button id="MoveToParent" href onclick="moveToParentBST();" style="width:100%">Move To Parent</button>
+                    <script>
+                        function moveToParentBST(){
+                            currentAlg.addStep("P")
+                            BSTUtils.clearCanvas();
+                            currentAlg.moveToParent();
+                            BSTUtils.redrawImage();
+                            document.getElementById("menuSimple").style.display = "none";
+
+                        }
+                    </script>
+                </td></tr>
+
+
+                <tr><td>
+                    <button id="Insert" href onclick="insertElementBST();" style="width:100%">Insert</button>
+                    <script>
+                        function insertElementBST(dir){
+
+                            var numberToInsert = BSTUtils.inputNumber();
+                            currentAlg.addStep("I"+((dir)?"R":"L")+numberToInsert);
+                            BSTUtils.clearCanvas();
+
+                            var nodeInserted = currentAlg.insertToLeaf(numberToInsert,dir, true);
+                            //alert(nodeInserted);
+                            //add event
+                            if(BSTUtils.validate(nodeInserted)){
+                                insertNodeToActionListener(nodeInserted);}
+                            currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+                            currentAlg.animationManager.skipForward();
+                            currentAlg.animationManager.clearHistory();
+                            document.getElementById("menuSimple").style.display = "none";
+                        }
+                    </script>
+                </td></tr>
+            </table>
+
+            <table border="1" id="AlgorithmSpecificControls_delete" style="display: none">
+
+                <tr><td><button id="Reset_delete" href onclick="Reset1();" style="width:100%">Reset</button></td></tr>
+
+                <tr><td><button id="MoveLeft_delete" href onclick="moveLeftBST();" style="width:100%">Move Left</button></td></tr>
+
+                <tr><td><button id="MoveRight_delete" href onclick="moveRightBST();" style="width:100%">Move Right</button></td></tr>
+
+                <tr><td><button id="MoveToParent_delete" href onclick="moveToParentBST();" style="width:100%">Move To Parent</button></td></tr>
+
+                <tr><td>
+
+                    <button id="Delete" href onclick="deleteElementBST();" style="width:100%">Delete Present Node</button>
+                    <script>
+                        function deleteElementBST(){
+                            currentAlg.addStep("D");
+                            var replacementNode = null;
+                            document.getElementById("menuSimple").style.display = "none";
+                            if(!(currentHighlightNode.left==null && currentHighlightNode.right==null)) {
+                                currentAlg.deleteElem = true;
+                                alert("Select node to replace deleted node");
+                                return ;
+                            }
+
+                            BSTUtils.clearCanvas();
+
+                            var temp = currentHighlightNode;
+                            while(currentAlg.moveToParent());
+                            var deletedElement = currentAlg.deleteCurrentHighlightedNode(temp, replacementNode);
+                            //alert("del"+deletedElement.graphicID);
+                            if(BSTUtils.validate(deletedElement))
+                                deleteNodeFromActionListener(deletedElement);
+                            currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+                            currentAlg.animationManager.skipForward();
+                            currentAlg.animationManager.clearHistory();
+
+                        }
+
+                        function dafterNodeSelected(){
+                            var replacementNode = null;
+//                                    do {
+//                                        var numberToReplace = BSTUtils.inputNumber("Enter node number to replace next deleted node(Enter -1 for null value)");
+//                                        replacementNode = currentAlg.getNode(numberToReplace);
+//                                    }while(replacementNode==currentHighlightNode);
+
+                            replacementNode = currentAlg.getNode(currentAlg.numberToReplace);
+                            currentAlg.addStep("RE"+currentAlg.numberToReplace);
+                            BSTUtils.clearCanvas();
+
+                            var temp = currentHighlightNode;
+                            while(currentAlg.moveToParent());
+                            var deletedElement = currentAlg.deleteCurrentHighlightedNode(temp, replacementNode);
+                            //alert("del"+deletedElement.graphicID);
+                            if(BSTUtils.validate(deletedElement))
+                                deleteNodeFromActionListener(deletedElement);
+                            currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+                            currentAlg.animationManager.skipForward();
+                            currentAlg.animationManager.clearHistory();
+                            document.getElementById("menuSimple").style.display = "none";
+
+                        }
+                    </script>
+
+                </td></tr>
+            </table>
+
+
+            <table border="1" id="AlgorithmSpecificControls_search" style="display: none">
+
+                <tr><td>
+                    <button id="Reset_search" href onclick="Reset1();" style="width:100%">Reset</button>
+                </td></tr>
+
+                <tr><td>
+                    <button id="Mark" href onclick="currentAlg.mark();" style="width:100%">Mark</button>
+                </td></tr>
+
+
+                <tr><td>
+                    <button id="MoveLeft_search" href onclick="moveLeftBST();" style="width:100%">Move Left</button>
+                </td></tr>
+
+                <tr><td>
+                    <button id="MoveRight_search" href onclick="moveRightBST();" style="width:100%">Move Right</button>
+                </td></tr>
+
+                <tr><td>
+                    <button id="MoveToParent_search" href onclick="moveToParentBST();" style="width:100%">Move To Parent</button>
+                </td></tr>
+
+
+            </table>
+
+
+        </div>
+
+
+        <!-- Drawing canvas where all animation is done.  Note:  can be resized in code -->
+
+        <canvas id="canvas" width="1500" height="500"></canvas>
+
+        <div id = "generalAnimationControlSection">
+            <!-- Table for buttons to control general animation (play/pause/undo/etc) ->
+            <!-- (filled in by javascript code, specifically AnimationMain.js)  -->
+
+            <table id="GeneralAnimationControls"></table>
+        </div>
+
+    </div> <!-- mainContent -->
+
+    <div class="menu_simple" id="menuSimple"  style="position:absolute;" >
+        <ul>
+            <li><a href="#" onclick="moveLeftBST();">Move Left</a></li>
+            <li><a href="#" onclick="moveRightBST();">Move Right</a></li>
+            <li><a href="#" onclick="moveToParentBST();">Move to Parent</a></li>
+            <li><a href="#" onclick="currentAlg.mark();">Mark</a></li>
+            <li><a href="#" onclick="insertElementBST(0);">Insert Left</a></li>
+            <li><a href="#" onclick="insertElementBST(1);">Insert Right</a></li>
+            <li><a href="#" onclick="deleteElementBST();">Delete</a></li>
+        </ul>
+    </div>
+
+
+
+    <div id = "insert_questions" style="display: none">
+        <b><p>Questions on Insert Operation</p></b>
+        <form action="">
+            <input type="radio" name="radio1" value="i1" checked="checked">Insert 44 to the binary search tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri1" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+
+            <input type="radio" name="radio1" value="i2">Insert 56 to the binary search tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri2" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+            <input type="radio" name="radio1" value="i3">Insert 68 to the binary search tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri3" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+
+            <input type="radio" name="radio1" value="i4">Mark the parent node of the newly added node?<br>
+            Output: <textarea class="scrollabletextbox" id="answeri4" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+            <br><input type="radio" name="radio1" value="i5">What is the height of the newly formed tree?<br>
+            Output: <textarea class="scrollabletextbox" id="answeri5"></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <br><input type="radio" name="radio1" value="i6">Insert nodes to make a full binary tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri6"></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+        </form>
+    </div>
+
+    <div id = "delete_questions" style="display: none">
+        <b><p>Questions on Delete Operation</p></b>
+        <form action="">
+            <input type="radio" name="radio2" value="d1" checked="checked">Delete the root of the tree<br>
+            Output: <textarea class="scrollabletextbox" id="answerd1" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio2" value="d2">Delete the 3rd largest value in the remaining tree<br>
+            Output: <textarea class="scrollabletextbox" id="answerd2" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <input type="radio" name="radio2" value="d3">Mark the child node(s), if any, of the node which replaced the deleted node in (2).<br>
+            Output: <textarea class="scrollabletextbox" id="answerd3" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio2" value="d4">What is the height of the newly formed tree?<br>
+            Output: <textarea class="scrollabletextbox" id="answerd4" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <input type="radio" name="radio2" value="d5">Delete necessary nodes to make a full binary tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerd5" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+        </form>
+    </div>
+
+    <div id = "misc_questions" style="display: none">
+        <b><p>Miscellaneous questions</p></b>
+        <form action="">
+            <input type="radio" name="radio3" value="m1" checked="checked">Do the inorder traversal of tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerm1" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio3" value="m2">Do the preorder traversal of tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerm2" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <input type="radio" name="radio3" value="m3">Do the postorder traversal of tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerm3" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio4" value="m4">Mark the lowest common ancestor of the first two leaf nodes(from left)?<br>
+            Output: <textarea class="scrollabletextbox" id="answerm4" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+        </form>
+    </div>
+
+
+    <script>
+        Scheme.loadScheme(Scheme.getSchemeVal());
+    </script>
+
+
+
+
+
+    <!--<div id = "qstn">-->
+    <!--<p>Inserting a new node with value = 56 </p>-->
+    <!--<p>What is the parent node of the newly added node?-->
+    <!--<input type="text" id="q1" />-->
+    <!--<output type = "text" id = "e1"  />-->
+
+    <!--<p>The number of nodes to the left of the root and to the right of the root after insertion (separated by " ").-->
+    <!--<input type="text" id="q2" />-->
+    <!--<p><output type = "text" id = "e2" /></P>-->
+
+    <!--<p>The height of the new tree after insertion.-->
+    <!--<input type="text" id="q3" />-->
+    <!--<output type = "text" id = "e3" />-->
+
+    <!--<p> Traversal</p>-->
+    <!--<p>Give the inorder traversal sequence of the tree (nodes separated by " "):-->
+    <!--<input type="text" id="q4" />-->
+    <!--<output type = "text" id = "e4" />-->
+
+    <!--<p><input type ="button" onclick="Test()" value="Submit" /> </P>-->
+    <!--</div>-->
+</div><!-- container -->
+</body>
+</html>

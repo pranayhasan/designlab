@@ -1,0 +1,439 @@
+<html>
+	<head>
+		
+		<title>
+			Heap Visualization
+		</title>
+		
+		<!-- css sheet for how the page is laid out -->
+		
+		<!-- <link rel="stylesheet" href="visualizationPageStyle.css"> -->
+			
+			
+		<!-- jqueury stuff.  Only used for the animation speed slider. -->
+
+		<link rel="stylesheet" href="ThirdParty/jquery-ui-1.8.11.custom.css">
+				
+		<script src="ThirdParty/jquery-1.5.2.min.js"></script>
+		<script src="ThirdParty/jquery-ui-1.8.11.custom.min.js"></script>
+				
+		<!-- Javascript for the actual visualization code -->
+		<script type = "application/javascript" src = "AnimationLibrary/CustomEvents.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/UndoFunctions.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/AnimatedObject.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/AnimatedLabel.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/AnimatedCircle.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/AnimatedRectangle.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/AnimatedLinkedList.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/HighlightCircle.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/Line.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/ObjectManager.js"> </script>
+		<script type = "application/javascript" src = "AnimationLibrary/AnimationMain.js"> </script>
+		<script type = "application/javascript" src = "AlgorithmLibrary/Algorithm.js"> </script>
+		<script type = "application/javascript" src = "AlgorithmLibrary/Heap.js"> </script>
+        <script type = "application/javascript" src = "AlgorithmLibrary/StateChecker.js"> </script>
+        <script type = "application/javascript" src = "AlgorithmLibrary/Record.js"> </script>
+        <script type = "application/javascript" src = "AlgorithmLibrary/Heap/HeapRecord.js"> </script>
+        <script type = "application/javascript" src = "AlgorithmLibrary/Heap/UndoHeapRecord.js"> </script>
+        <script type = "application/javascript" src = "HeapUtils.js"> </script>
+        <script type = "application/javascript" src = "Scheme.js"> </script>
+
+        <link rel="stylesheet" type="text/css" href="menu.css" />
+        <link rel="stylesheet" type="text/css" href="radio.css" />
+
+				
+			
+	 </head> 
+	
+	<body onload="init();" class="VisualizationMainPage">
+		
+		<div id = "container">
+			
+			<div id="header">  
+				<h1>Min Heap</h1>
+			</div>
+
+			<div class="tabs_holder" style="display: none">
+                <ul>
+                    <a id="insertOperation" href="#" onclick="insertOperation();return false;" style="width:100%">Insert Element</a>
+                    <script>
+                        function insertOperation(){
+                            document.getElementById("AlgorithmSpecificControls_insert").style.display = "block";
+                            document.getElementById("AlgorithmSpecificControls_delete").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapify").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_makeheap").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapsort").style.display = "none";
+                        }
+                    </script>
+                    
+                    <br>
+                    
+                    <a id="deleteOperation" href="#" onclick="deleteOperation();return false;" style="width:100%">Delete Smallest</a>
+                    <script>
+                        function deleteOperation(){
+                            document.getElementById("AlgorithmSpecificControls_insert").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_delete").style.display = "block";
+                            document.getElementById("AlgorithmSpecificControls_heapify").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_makeheap").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapsort").style.display = "none";
+                        }
+                    </script>
+
+                    <br>
+
+                    <a id="heapifyOperation" href="#" onclick="heapifyOperation();return false;" style="width:100%">Heapify</a>
+                    <script>
+                        function heapifyOperation(){
+                            document.getElementById("AlgorithmSpecificControls_insert").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_delete").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapify").style.display = "block";
+                            document.getElementById("AlgorithmSpecificControls_makeheap").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapsort").style.display = "none";
+                        }
+                    </script>
+
+                    <br>
+
+                    <a id="makeHeapOperation" href="#" onclick="makeHeapOperation();return false;" style="width:100%">Make Heap</a>
+                    <script>
+                        function makeHeapOperation(){
+                            document.getElementById("AlgorithmSpecificControls_insert").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_delete").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapify").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_makeheap").style.display = "block";
+                            document.getElementById("AlgorithmSpecificControls_heapsort").style.display = "none";
+                        }
+                    </script>
+
+                     <br>
+
+                    <a id="HeapSortOperation" href="#" onclick="HeapSortOperation();return false;" style="width:100%">Heap Sort</a>
+                    <script>
+                        function HeapSortOperation(){
+                            document.getElementById("AlgorithmSpecificControls_insert").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_delete").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapify").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_makeheap").style.display = "none";
+                            document.getElementById("AlgorithmSpecificControls_heapsort").style.display = "block";
+                        }
+                    </script>
+
+                </ul>
+            </div>
+
+			<div id = "mainContent"> 
+                
+				<div id = "algoControlSection">
+					<!-- Table for buttons to control specific animation (insert/find/etc) -->
+					<!-- (filled in by javascript code specific to the animtion) -->
+					<table border="1" id="AlgorithmSpecificControls_insert" style="display: none">
+
+                        <tr><td>
+                            <button id="Reset1" href onclick="Reset1();" style="width:100%">Reset</button>
+                            <script>
+                                function Reset1(){
+
+                                    currentAlg.deleteAllElements(currentAlg.treeRoot);
+                                    currentAlg.commands = [];
+                                    HeapUtils.clearCanvas();
+                                    HeapUtils.redrawImage();
+
+                                    currentAlg.commands = currentAlg.initCommands;
+                                    HeapUtils.clearCanvas();
+                                    //alert(currentAlg.commands);
+                                    HeapUtils.redrawImage();
+                                }
+                            </script>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveLeft" href onclick="moveLeftHeap();" style="width:100%">Move Left</button>
+                            <script>
+                                function moveLeftHeap(){
+
+                                    HeapUtils.clearCanvas();
+                                    currentAlg.moveLeft();
+                                    HeapUtils.redrawImage();
+
+                                }
+                            </script>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveRight" href onclick="moveRightHeap();" style="width:100%">Move Right</button>
+                            <script>
+                                function moveRightHeap(){
+
+                                    HeapUtils.clearCanvas();
+                                    currentAlg.moveRight();
+                                    HeapUtils.redrawImage();
+
+                                }
+                            </script>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveToParent" href onclick="moveToParentHeap();" style="width:100%">Move To Parent</button>
+                            <script>
+                                function moveToParentHeap(){
+
+                                    HeapUtils.clearCanvas();
+                                    currentAlg.moveToParent();
+                                    HeapUtils.redrawImage();
+
+                                }
+                            </script>
+                        </td></tr>
+
+
+                        <tr><td>
+                            <button id="Insert" href onclick="insertElementHeap();" style="width:100%">Insert</button>
+                            <script>
+                                function insertElementHeap(){
+
+                                    var numberToInsert = HeapUtils.inputNumber();
+                                    HeapUtils.clearCanvas();
+
+                                    currentAlg.insertToLeaf(numberToInsert,true);
+                                    currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+                                    currentAlg.animationManager.skipForward();
+                                    currentAlg.animationManager.clearHistory();
+                                }
+                            </script>
+                        </td></tr>
+                    </table>
+
+                    <table border="1" id="AlgorithmSpecificControls_delete" style="display: none">
+
+                        <tr><td><button id="Reset_delete" href onclick="Reset1();" style="width:100%">Reset</button></td></tr>
+
+                        <tr><td><button id="MoveLeft_delete" href onclick="moveLeftHeap();" style="width:100%">Move Left</button></td></tr>
+
+                        <tr><td><button id="MoveRight_delete" href onclick="moveRightHeap();" style="width:100%">Move Right</button></td></tr>
+
+                        <tr><td><button id="MoveToParent_delete" href onclick="moveToParentHeap();" style="width:100%">Move To Parent</button></td></tr>
+
+                        <tr><td>
+
+                            <button id="Delete" href onclick="deleteElementHeap();" style="width:100%">Delete Present Node</button>
+                            <script>
+                                function deleteElementHeap(){
+                                    var replacementNode = null;
+                                    if(!(currentHighlightNode.left==null && currentHighlightNode.right==null)) {
+
+                                        do {
+                                            var numberToReplace = HeapUtils.inputNumber("Enter node number to replace next deleted node(Enter -1 for null value)");
+                                            replacementNode = currentAlg.getNode(numberToReplace);
+                                            //alert(replacementNode);
+                                        }while(replacementNode==currentHighlightNode);
+                                    }
+
+                                    HeapUtils.clearCanvas();
+
+                                    var temp = currentHighlightNode;
+                                    while(currentAlg.moveToParent());
+                                    currentAlg.deleteCurrentHighlightedNode(temp, replacementNode);
+
+                                    currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+                                    currentAlg.animationManager.skipForward();
+                                    currentAlg.animationManager.clearHistory();
+
+                                }
+                            </script>
+ 
+                        </td></tr>
+                    </table>
+
+
+                    <table border="1" id="AlgorithmSpecificControls_search" style="display: none">
+
+                        <tr><td>
+                            <button id="Reset_search" href onclick="Reset1();" style="width:100%">Reset</button>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveLeft_search" href onclick="moveLeftHeap();" style="width:100%">Move Left</button>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveRight_search" href onclick="moveRightHeap();" style="width:100%">Move Right</button>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveToParent_search" href onclick="moveToParentHeap();" style="width:100%">Move To Parent</button>
+                        </td></tr>
+
+
+                    </table>
+
+                    <table border="1" id="AlgorithmSpecificControls_search" style="display: none">
+
+                        <tr><td>
+                            <button id="Reset_search" href onclick="Reset1();" style="width:100%">Reset</button>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveLeft_search" href onclick="moveLeftHeap();" style="width:100%">Move Left</button>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveRight_search" href onclick="moveRightHeap();" style="width:100%">Move Right</button>
+                        </td></tr>
+
+                        <tr><td>
+                            <button id="MoveToParent_search" href onclick="moveToParentHeap();" style="width:100%">Move To Parent</button>
+                        </td></tr>
+
+
+                    </table>
+
+
+				</div>
+			
+
+
+        <!-- Drawing canvas where all animation is done.  Note:  can be resized in code -->
+
+        <canvas id="canvas" width="1500" height="500"></canvas>
+
+        <div id = "generalAnimationControlSection">
+            <!-- Table for buttons to control general animation (play/pause/undo/etc) ->
+            <!-- (filled in by javascript code, specifically AnimationMain.js)  -->
+
+            <table id="GeneralAnimationControls"></table>
+        </div>
+
+    </div> <!-- mainContent -->
+
+    <div class="menu_simple" id="menuSimple"  style="position:absolute;" >
+        <ul>
+            <li><a href="#" onclick="moveLeftHeap();">Move Left</a></li>
+            <li><a href="#" onclick="moveRightHeap();">Move Right</a></li>
+            <li><a href="#" onclick="moveToParentHeap();">Move to Parent</a></li>
+            <li><a href="#" onclick="currentAlg.mark();">Mark</a></li>
+            <li><a href="#" onclick="insertElementHeap(0);">Insert Left</a></li>
+            <li><a href="#" onclick="insertElementHeap(1);">Insert Right</a></li>
+            <li><a href="#" onclick="deleteElementHeap();">Delete</a></li>
+        </ul>
+    </div>
+
+
+
+    <div id = "insert_questions" style="display: none">
+        <b><p>Questions on Insert Operation</p></b>
+        <form action="">
+            <input type="radio" name="radio1" value="i1" checked="checked">Insert 44 to the binary search tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri1" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+
+            <input type="radio" name="radio1" value="i2">Insert 56 to the binary search tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri2" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+            <input type="radio" name="radio1" value="i3">Insert 68 to the binary search tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri3" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+
+            <input type="radio" name="radio1" value="i4">Mark the parent node of the newly added node?<br>
+            Output: <textarea class="scrollabletextbox" id="answeri4" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+
+            <br><input type="radio" name="radio1" value="i5">What is the height of the newly formed tree?<br>
+            Output: <textarea class="scrollabletextbox" id="answeri5"></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <br><input type="radio" name="radio1" value="i6">Insert nodes to make a full binary tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answeri6"></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+        </form>
+    </div>
+
+    <div id = "delete_questions" style="display: none">
+        <b><p>Questions on Delete Operation</p></b>
+        <form action="">
+            <input type="radio" name="radio2" value="d1" checked="checked">Delete the root of the tree<br>
+            Output: <textarea class="scrollabletextbox" id="answerd1" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio2" value="d2">Delete the 3rd largest value in the remaining tree<br>
+            Output: <textarea class="scrollabletextbox" id="answerd2" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <input type="radio" name="radio2" value="d3">Mark the child node(s), if any, of the node which replaced the deleted node in (2).<br>
+            Output: <textarea class="scrollabletextbox" id="answerd3" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio2" value="d4">What is the height of the newly formed tree?<br>
+            Output: <textarea class="scrollabletextbox" id="answerd4" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <input type="radio" name="radio2" value="d5">Delete necessary nodes to make a full binary tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerd5" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+        </form>
+    </div>
+
+    <div id = "misc_questions" style="display: none">
+        <b><p>Miscellaneous questions</p></b>
+        <form action="">
+            <input type="radio" name="radio3" value="m1" checked="checked">Do the inorder traversal of tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerm1" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio3" value="m2">Do the preorder traversal of tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerm2" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+            <input type="radio" name="radio3" value="m3">Do the postorder traversal of tree.<br>
+            Output: <textarea class="scrollabletextbox" id="answerm3" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+
+            <input type="radio" name="radio4" value="m4">Mark the lowest common ancestor of the first two leaf nodes(from left)?<br>
+            Output: <textarea class="scrollabletextbox" id="answerm4" readonly></textarea>
+            <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
+            <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
+
+        </form>
+    </div>
+
+
+    <script>
+        Scheme.loadScheme(Scheme.getSchemeVal());
+    </script>
+
+    <div id = "algoControlSection">
+    <table id="AlgorithmSpecificControls"> </table> 
+    </div>
+                        
+    <canvas id="canvas" width="1000" height="500"></canvas>
+    
+    <div id = "generalAnimationControlSection">
+        <table id="GeneralAnimationControls">  </table>     
+    </div>
+
+
+
+		</div><!-- container -->
+	</body>
+</html>

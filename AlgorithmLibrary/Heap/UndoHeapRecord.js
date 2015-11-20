@@ -1,0 +1,3 @@
+/*
+Records states in stack. To be used for undo operations. extends Record
+ */
