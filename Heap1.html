@@ -161,6 +161,7 @@
                         function insertElementHeap(){
 
                             var numberToInsert = HeapUtils.inputNumber();
+                            if(numberToInsert == "" || parseInt(numberToInsert)>9999) return;
                             currentAlg.addStep("I"+numberToInsert);
                             HeapUtils.clearCanvas();
 
@@ -181,8 +182,8 @@
                     <button id="SwapToParent" href onclick="swapToParent();" style="width:100%">Swap To Parent</button>
                     <script>
                         function swapToParent(){
-
                             var index = HeapUtils.inputNumber();
+                            if(index == "" || parseInt(index) > 30 || parseInt(index) <= 0) return false;
                             currentAlg.addStep("SW"+index);
                             HeapUtils.clearCanvas();
 

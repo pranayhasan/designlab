@@ -274,21 +274,28 @@ Heap.prototype.insertElement = function(insertedValue)
 	//********
 	if(this.treeRoot == null)
 	{
-		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.HeapXPositions[i], this.HeapYPositions[i]);
+		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+		this.cmd("SetForegroundColor", this.nextIndex, Heap.FOREGROUND_COLOR);//added
+    	this.cmd("SetBackgroundColor", this.nextIndex, Heap.BACKGROUND_COLOR);//added
+    	this.cmd("Step");
+
+		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.startingX, this.STARTING_Y);
 		this.heapStructure[this.currentHeapSize].graphicID = this.nextIndex;
 		this.heapStructure[this.currentHeapSize].data = insertedValue;
 		this.heapStructure[this.currentHeapSize].x = this.HeapXPositions[this.currentHeapSize];
 		this.heapStructure[this.currentHeapSize].y = this.HeapYPositions[this.currentHeapSize];
 		this.treeRoot = this.heapStructure[this.currentHeapSize];
 
-		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.heapStructure[this.currentHeapSize].x, this.heapStructure[this.currentHeapSize].y);
-		this.cmd("SetForegroundColor", this.nextIndex, Heap.FOREGROUND_COLOR);//added
-    	this.cmd("SetBackgroundColor", this.nextIndex, Heap.BACKGROUND_COLOR);//added
     	this.nextIndex += 1;
 	}
 	else
 	{
+		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+		// this.cmd("CreateCircle",this.nextIndex, insertedValue, 100, 100);
+		this.cmd("Step");
+
 		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.HeapXPositions[i], this.HeapYPositions[i]);
+		// this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, 100, 100);
 		this.heapStructure[this.currentHeapSize].graphicID = this.nextIndex;
 		this.heapStructure[this.currentHeapSize].data = insertedValue;
 		this.heapStructure[this.currentHeapSize].x = this.HeapXPositions[this.currentHeapSize];
@@ -300,11 +307,9 @@ Heap.prototype.insertElement = function(insertedValue)
 		else
 			this.heapStructure[Math.floor(this.currentHeapSize/2)].right = this.heapStructure[this.currentHeapSize];
 
-		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.heapStructure[this.currentHeapSize].x, this.heapStructure[this.currentHeapSize].y);
 		this.nextIndex += 1;
 
 	}
-	this.highlightID = this.nextIndex;
 	//********
 
 	this.cmd("CreateLabel", this.descriptLabel2, insertedValue, 120, 45,  1);
@@ -348,6 +353,7 @@ Heap.prototype.insertElement = function(insertedValue)
 			this.setIndexHighlight(parentIndex, 0);
 		}
 	}
+	this.highlightID = this.nextIndex;
 }
 
 Heap.prototype.insert = function(insertedValue)
@@ -416,6 +422,8 @@ Heap.prototype.insert = function(insertedValue)
 	this.cmd("SetText", this.arrayRects[this.currentHeapSize], insertedValue);
 
 	this.resizeTree();
+
+	return this.heapStructure[this.currentHeapSize];
 }
 
 Heap.prototype.resizeTree = function()
