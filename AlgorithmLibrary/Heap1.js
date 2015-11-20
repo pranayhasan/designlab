@@ -560,24 +560,29 @@ Heap.prototype.heapify = function(index)
 	return this.commands;
 }
 
-Heap.prototype.swapWithParent = function(index)
+Heap.prototype.swapWithParent = function()
 {
-	index += 1;
+	var index = 0
+
+	for(i=1;i<this.currentHeapSize;i++)
+		if(this.heapStructure[i] == currentHighlightNode)
+			index = i
 
 	if(index > this.currentHeapSize || index <= 1)
 	{
 		this.cmd("SetText", this.descriptLabel1, "Swapping not possible!");
-		return this.commands;
+		return 0;
 	}
 
 	parent = parseInt(index/2);
-	this.cmd("SetText", this.descriptLabel1, 'swapping indices '+index+' and its parent '+parent);
+	this.cmd("SetText", this.descriptLabel1, 'swapping indices '+(index-1)+' and its parent '+(parent-1));
 
 	index1 = index;
 	index2 = parent;
 
 	// console.log('swapping index '+(index1+1)+' and '+(index2+1));
 	this.swap(index1, index2);
+	return index-1;
 }
 
 Heap.prototype.pushDown = function(index)
@@ -907,9 +912,13 @@ Heap.prototype.setIndexHighlight = function(index, highlightVal)
 	this.cmd("SetHighlight", this.arrayRects[index], highlightVal);
 }
 
-Heap.prototype.rename = function(index, value)
+Heap.prototype.rename = function(value)
 {
-	index += 1
+	var index = 0
+
+	for(i=1;i<this.currentHeapSize;i++)
+		if(this.heapStructure[i] == currentHighlightNode)
+			index = i
 
 	// console.log('swapping index '+index1+' and '+index2);
 	this.cmd("SetText", this.arrayRects[index], "");
@@ -924,4 +933,41 @@ Heap.prototype.rename = function(index, value)
 	this.cmd("SetText", this.arrayRects[index], this.arrayData[index]);
 	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
 	this.cmd("SetText", this.heapStructure[index].graphicID, this.arrayData[index]);
+}
+
+Heap.prototype.delete = function()
+{
+
+	if (this.currentHeapSize == 0)
+	{
+		console.log('Current Heap size = 0')
+		this.cmd("SetText", this.descriptLabel1, "Heap is empty, cannot remove smallest element");
+		return null;
+	}
+
+	this.cmd("SetText", this.descriptLabel1, "Removing element:");
+
+	var deletedNode = this.heapStructure[this.currentHeapSize];
+	// console.log('swapping index '+index1+' and '+index2);
+	this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
+	// this.cmd("SetText", this.circleObjs[index1], "");
+	this.cmd("SetText", this.heapStructure[this.currentHeapSize].graphicID, "");
+	// this.cmd("SetText", this.circleObjs[index2], "");
+
+	this.cmd("Step");
+	this.cmd("SetText", this.arrayRects[this.currentHeapSize], this.arrayData[this.currentHeapSize]);
+	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
+	this.cmd("SetText", this.heapStructure[this.currentHeapSize].graphicID, this.arrayData[this.currentHeapSize]);
+
+	if(this.heapStructure[this.currentHeapSize].parent.left == this.heapStructure[this.currentHeapSize])
+		this.heapStructure[this.currentHeapSize].parent.left = null;
+	else
+		this.heapStructure[this.currentHeapSize].parent.right = null;
+	this.arrayData[this.currentHeapSize] = null
+
+	this.cmd("Delete", this.heapStructure[this.currentHeapSize].graphicID);
+	this.currentHeapSize -= 1;
+
+	return deletedNode;
+
 }

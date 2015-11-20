@@ -182,17 +182,43 @@
                     <button id="SwapToParent" href onclick="swapToParent();" style="width:100%">Swap To Parent</button>
                     <script>
                         function swapToParent(){
-                            var index = HeapUtils.inputNumber();
-                            if(index == "" || parseInt(index) > 30 || parseInt(index) <= 0) return false;
-                            currentAlg.addStep("SW"+index);
-                            HeapUtils.clearCanvas();
 
-                            console.log('Swap to Parent '+index)
-                            var swapped = currentAlg.swapWithParent(parseInt(index));
+                            var swapped = currentAlg.swapWithParent();
+                            if(swapped)
+                            {
+                                currentAlg.addStep("SW"+swapped);
+                                HeapUtils.clearCanvas(); 
+                            }
+                            
                             //alert(nodeInserted);
                             //add event
                             // if(HeapUtils.validate(swapped)){
                             //     insertNodeToActionListener(nodeInserted);}
+                            currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
+                            currentAlg.animationManager.skipForward();
+                            currentAlg.animationManager.clearHistory();
+                            document.getElementById("menuSimple").style.display = "none";
+
+                        }
+                    </script>
+                </td></tr>
+
+                <tr><td>
+                    <button id="renameElementHeap" href onclick="renameElementHeap();" style="width:100%">Rename Element Heap</button>
+                    <script>
+                        function renameElementHeap(){
+
+                            var replacedNumber = HeapUtils.inputNumber();
+                            if(replacedNumber == "" || parseInt(replacedNumber)>9999) return;
+                            
+                            currentAlg.addStep("RE"+parseInt(replacedNumber));
+                            HeapUtils.clearCanvas();
+
+                            var nodeRenamed = currentAlg.rename(parseInt(replacedNumber));
+                            //alert(nodeInserted);
+                            //add event
+                            // if(HeapUtils.validate(nodeRenamed)){
+                            //     insertNodeToActionListener(nodeRenamed);}
                             currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
                             currentAlg.animationManager.skipForward();
                             currentAlg.animationManager.clearHistory();
@@ -218,24 +244,21 @@
 
                 <tr><td>
 
-                    <button id="Delete" href onclick="deleteElementHeap();" style="width:100%">Delete Present Node</button>
+                    <button id="Delete" href onclick="deleteElementHeap();" style="width:100%">Delete Node</button>
                     <script>
                         function deleteElementHeap(){
                             currentAlg.addStep("D");
-                            var replacementNode = null;
+                        
                             document.getElementById("menuSimple").style.display = "none";
-                            if(!(currentHighlightNode.left==null && currentHighlightNode.right==null)) {
-                                currentAlg.deleteElem = true;
-                                // alert("Select node to replace deleted node");
-                                alert("Deletion Not possible");
-                                return ;
-                            }
+                            // if(!(currentHighlightNode.left==null && currentHighlightNode.right==null)) {
+                            //     currentAlg.deleteElem = true;
+                            //     // alert("Select node to replace deleted node");
+                            //     alert("Deletion Not possible");
+                            //     return ;
+                            // }
 
                             HeapUtils.clearCanvas();
-
-                            var temp = currentHighlightNode;
-                            while(currentAlg.moveToParent());
-                            var deletedElement = currentAlg.deleteCurrentHighlightedNode(temp, replacementNode);
+                            var deletedElement = currentAlg.delete();
                             //alert("del"+deletedElement.graphicID);
                             if(HeapUtils.validate(deletedElement))
                                 deleteNodeFromActionListener(deletedElement);
@@ -331,6 +354,7 @@
                         <li><a href="#" onclick="insertElementHeap();">Insert</a></li>
                         <li><a href="#" onclick="swapToParent();">Swap To Parent</a></li>
                         <li><a href="#" onclick="deleteElementHeap();">Delete</a></li>
+                        <li><a href="#" onclick="renameElementHeap();">Rename</a></li>
                     </ul>
                 </div>
 
