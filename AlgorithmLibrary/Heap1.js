@@ -955,7 +955,7 @@ Heap.prototype.delete = function()
 	// this.cmd("SetText", this.circleObjs[index2], "");
 
 	this.cmd("Step");
-	this.cmd("SetText", this.arrayRects[this.currentHeapSize], this.arrayData[this.currentHeapSize]);
+	this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
 	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
 	this.cmd("SetText", this.heapStructure[this.currentHeapSize].graphicID, this.arrayData[this.currentHeapSize]);
 
