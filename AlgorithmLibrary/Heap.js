@@ -6,10 +6,23 @@ Heap.BACKGROUND_COLOR = "#EEFFEE";
 Heap.PRINT_COLOR = Heap.FOREGROUND_COLOR;
 Heap.HEIGHT_COLOR = Heap.FOREGROUND_COLOR;
 
+// Heap.WIDTH_DELTA  = 50;
+// Heap.HEIGHT_DELTA = 50;
+// Heap.STARTING_Y = 120;
 
-Heap.WIDTH_DELTA  = 50;
-Heap.HEIGHT_DELTA = 50;
-Heap.STARTING_Y = 120;
+
+// Heap.FIRST_PRINT_POS_X  = 100;
+// Heap.PRINT_VERTICAL_GAP  = 20;
+// Heap.PRINT_HORIZONTAL_GAP = 50;
+
+
+// Heap.FIRST_HEIGHT_POS_X  = 50;
+// Heap.HEIGHT_VERTICAL_GAP  = 20;
+
+
+Heap.WIDTH_DELTA  = 100;
+Heap.HEIGHT_DELTA = 70;
+Heap.STARTING_Y = 100;
 
 
 Heap.FIRST_PRINT_POS_X  = 100;
@@ -20,6 +33,7 @@ Heap.PRINT_HORIZONTAL_GAP = 50;
 Heap.FIRST_HEIGHT_POS_X  = 50;
 Heap.HEIGHT_VERTICAL_GAP  = 20;
 
+//****************************
 var ARRAY_SIZE  = 32;
 var ARRAY_ELEM_WIDTH = 30;
 var ARRAY_ELEM_HEIGHT = 25;
@@ -27,10 +41,13 @@ var ARRAY_INITIAL_X = 30;
 
 var ARRAY_Y_POS = 50;
 var ARRAY_LABEL_Y_POS = 70;
+//*****************************
+
 
 function Heap(am, w, h)
 {
 	this.init(am, w, h);
+
 }
 
 Heap.prototype = new Algorithm();
@@ -46,51 +63,53 @@ Math.seededRandom = function(min, max)
     return parseInt(min + rnd * (max - min));
 }
 
+
 Heap.prototype.init = function(am, w, h)
 {
-    this.answers = {};
+	this.answers = {};
     this.actionElements = [];
 	var sc = Heap.superclass;
-
-    this.startingX =  w / 3;
+	this.startingX =  450;
     this.first_print_pos_y  = h - 2 * Heap.PRINT_VERTICAL_GAP;
     this.first_HEIGHT_pos_y  = h - 2 * Heap.HEIGHT_VERTICAL_GAP;
     this.print_max  = w - 10;
 
-    var fn = sc.init;
+	var fn = sc.init;
 	fn.call(this,am);
 
 
-	// this.addControls();
-	this.nextIndex = 0;
+	this.addControls();
 	this.HeapXPositions = [0, 450, 250, 650, 150, 350, 550, 750, 100, 200, 300, 400, 500, 600,
 					  700, 800, 075, 125, 175, 225, 275, 325, 375, 425, 475, 525, 575, 
 					  625, 675, 725, 775, 825];
 	this.HeapYPositions = [0, 100, 170, 170, 240, 240, 240, 240, 310, 310, 310, 310, 310, 310,
 					  310, 310, 380, 380, 380, 380, 380, 380, 380, 380, 380, 380, 380, 
 					  380, 380, 380, 380, 380];
+	// this.commands = [];
+	this.nextIndex = 0;
 
-	this.commands = [];
+	var seed = 29,offset = 1;
+	Math.seed = seed+offset;
+	this.createArray();
+
 	this.initCommands = this.commands;
-
-	this.newArray(29,1);
 
 	this.animationManager.StartNewAnimation(this.commands);
 	this.animationManager.skipForward();
 	this.animationManager.clearHistory();
-	this.deleteElem = false;
-	this.numberToReplace = -1;
 	
 }
 
 Heap.prototype.addControls =  function() //Inserts elements in diplay and sets callbacks
 {
+	//ADMIN
+	addCheckboxToAlgorithmBar("ADMIN");
 	this.newArrayButton = addControlToAlgorithmBar("Button", "Generate Array");
 	this.newArrayButton.onclick = this.newArrayCallback.bind(this);
 
+	this.insertButton = addControlToAlgorithmBar("Button", "Insert >");
 	this.insertField = addControlToAlgorithmBar("Text", "");
 	this.insertField.onkeydown = this.returnSubmit(this.insertField, this.insertCallback.bind(this), 4, true);
-	this.insertButton = addControlToAlgorithmBar("Button", "Insert");
 	this.insertButton.onclick = this.insertCallback.bind(this);
 
 	this.removeSmallestButton = addControlToAlgorithmBar("Button", "Remove Smallest");
@@ -99,18 +118,19 @@ Heap.prototype.addControls =  function() //Inserts elements in diplay and sets c
 	this.buildHeapButton = addControlToAlgorithmBar("Button", "Make Heap");
 	this.buildHeapButton.onclick = this.buildHeapCallback.bind(this);
 
+	this.heapifyButton = addControlToAlgorithmBar("Button", "Heapify Index >");
 	this.insertIndex = addControlToAlgorithmBar("Text", "");
 	this.insertIndex.onkeydown = this.returnSubmit(this.insertIndex, this.heapifyCallback.bind(this), 2, true);
-	this.heapifyButton = addControlToAlgorithmBar("Button", "Heapify Index");
 	this.heapifyButton.onclick = this.heapifyCallback.bind(this);
 
 	this.clearHeapButton = addControlToAlgorithmBar("Button", "Clear Heap");
 	this.clearHeapButton.onclick = this.clearCallback.bind(this);
+
 }
 
 Heap.prototype.newArrayCallback = function(event)
 {
-	this.implementAction(this.newArray.bind(this),"");			
+	this.implementAction(this.newArrayBox.bind(this),"");			
 }
 
 Heap.prototype.insertCallback = function(event)
@@ -118,8 +138,9 @@ Heap.prototype.insertCallback = function(event)
 	var insertedValue = this.normalizeNumber(this.insertField.value,4);
 	if (insertedValue != "")
 	{
+		// console.log('Value inserted :'+parseInt(insertedValue));
 		this.insertField.value = "";
-		this.implementAction(this.insertElementManual.bind(this),parseInt(insertedValue));
+		this.implementAction(this.insertElementBox.bind(this),parseInt(insertedValue));
 	}
 }
 
@@ -133,12 +154,6 @@ Heap.prototype.buildHeapCallback = function(event)
 	this.implementAction(this.buildHeap.bind(this),"");			
 }
 
-Heap.prototype.clearCallback = function(event) //TODO:  Make me undoable!!
-{
-	this.commands = new Array();
-	this.implementAction(this.clear.bind(this),"");
-}
-
 Heap.prototype.heapifyCallback = function(event)
 {
 	var insertedValue = this.normalizeNumber(this.insertIndex.value,2);
@@ -149,36 +164,53 @@ Heap.prototype.heapifyCallback = function(event)
 	}
 }
 
-Heap.prototype.newArray = function(seed, offset) 
+Heap.prototype.deleteCallback = function(event)
 {
-	Math.seed = seed+offset;
-    this.arrayData = new Array(ARRAY_SIZE);
-    this.arrayLabels = new Array(ARRAY_SIZE);
-    this.arrayRects = new Array(ARRAY_SIZE);
-    this.circleObjs = new Array(ARRAY_SIZE);
-    this.ArrayXPositions = new Array(ARRAY_SIZE);
-    this.currentHeapSize = 0;
-	this.commands = [];
-	// this.clear();
+	var deleteID = this.normalizeNumber(this.deleteIndex.value,2);
+	if (deleteID != "")
+	{
+		this.deleteIndex.value = "";
+		this.implementAction(this.deleteElement.bind(this),parseInt(deleteID));
+	}
+}
 
+Heap.prototype.clearCallback = function(event) //TODO:  Make me undoable!!
+{
+	this.commands = new Array();
+	this.implementAction(this.clear.bind(this),"");
+}
+
+Heap.prototype.createArray = function()
+{
+	this.heapStructure = new Array(ARRAY_SIZE);
+	this.heapStructure[0] = new HeapNode(0,0,this.ARRAY_INITIAL_X+30, ARRAY_LABEL_Y_POS);
+	this.arrayData = new Array(ARRAY_SIZE);
+	this.arrayLabels = new Array(ARRAY_SIZE);
+	this.arrayRects = new Array(ARRAY_SIZE);
+	// this.circleObjs = new Array(ARRAY_SIZE);
+	this.ArrayXPositions = new Array(ARRAY_SIZE);
+	this.currentHeapSize = 0;
+	
 	for (var i = 0; i < ARRAY_SIZE; i++)
 	{
 		this.ArrayXPositions[i] = ARRAY_INITIAL_X + i *ARRAY_ELEM_WIDTH; //Position of each element to display
-		this.arrayLabels[i] = this.nextIndex++; 
 		this.arrayRects[i] = this.nextIndex++;
-		this.circleObjs[i] = this.nextIndex++;
-		this.cmd("CreateRectangle", this.arrayRects[i], "", ARRAY_ELEM_WIDTH, ARRAY_ELEM_HEIGHT, this.ArrayXPositions[i] , ARRAY_Y_POS)
-		// this.cmd("CreateLabel", this.arrayLabels[i], i,  this.ArrayXPositions[i]+30, ARRAY_LABEL_Y_POS);
-		this.cmd("SetForegroundColor", this.arrayLabels[i], Heap.FOREGROUND_COLOR);
+		// this.circleObjs[i] = this.nextIndex++;
+		if(i)
+		{
+			this.cmd("CreateRectangle", this.arrayRects[i], "", ARRAY_ELEM_WIDTH, ARRAY_ELEM_HEIGHT, this.ArrayXPositions[i] , ARRAY_Y_POS)
+			// this.cmd("CreateLabel", this.arrayLabels[i], i,  this.ArrayXPositions[i]+30, ARRAY_LABEL_Y_POS);
+			this.cmd("SetForegroundColor", this.arrayLabels[i], Heap.FOREGROUND_COLOR);
+		}
 	}
 
 	for (var i = 0; i < ARRAY_SIZE-1; i++)
 	{
+		this.arrayLabels[i] = this.nextIndex++; 
 		this.cmd("CreateLabel", this.arrayLabels[i], i,  this.ArrayXPositions[i]+30, ARRAY_LABEL_Y_POS);
 	}
 
 
-	this.cmd("SetText", this.arrayRects[0], "HEAP");
 	this.swapLabel1 = this.nextIndex++;
 	this.swapLabel2 = this.nextIndex++;
 	this.swapLabel3 = this.nextIndex++;
@@ -186,65 +218,111 @@ Heap.prototype.newArray = function(seed, offset)
 	this.descriptLabel1 = this.nextIndex++;
 	this.descriptLabel2 = this.nextIndex++;
 	this.cmd("CreateLabel", this.descriptLabel1, "", 20, 10,  0);
+	//this.cmd("CreateLabel", this.descriptLabel2, "", this.nextIndex, 40, 120, 0);
 
-
-
-	var heapsize = Math.seededRandom(10,220)%10+10;
-    // alert(heapsize);
-	for (var i = 1; i <heapsize; i++)
-	{
-		this.arrayData[i] = String(Math.seededRandom(0,100));
-		// this.insertElementHeap(this.arrayData[i]);
-		this.insertElement(this.arrayData[i], true);
-	}
-	// this.cmd("Step");
-	return this.commands;
+	this.newArray();
 }
 
-Heap.prototype.insertElementManual = function(insertedValue)
+Heap.prototype.newArrayBox = function(event)
 {
 	this.commands = new Array();
-	this.insertElementHeap(insertedValue);
+	this.newArray();
 	return this.commands;
 }
 
-Heap.prototype.insertElementHeap = function(insertedValue)
+Heap.prototype.newArray = function(event) 
 {
-	console.log('Value inserted :'+parseInt(insertedValue));
-
 	// this.commands = new Array();
+	this.clear();
+	heapsize = Math.seededRandom(10,100)%15+10;
+	this.currentHeapSize = 0;
+	for (var i = 1; i < heapsize; i++)
+	{
+		this.arrayData[i] = parseInt(this.normalizeNumber(String(Math.seededRandom(10,100)), 4));
+		this.insertElement(this.arrayData[i]);
+	}
+	// this.cmd("Step");
+	// return this.commands;
+};
+
+Heap.prototype.insertElementBox = function(insertedValue)
+{
+	this.commands = new Array();
+	this.insertElement(insertedValue);
+	return this.commands;
+}
+
+Heap.prototype.insertElement = function(insertedValue)
+{
 	
 	if (this.currentHeapSize >= ARRAY_SIZE - 1)
 	{
 		this.cmd("SetText", this.descriptLabel1, "Heap Full!");
 		return this.commands;
 	}
-	
+
+	// console.log("Inserting Element: " + insertedValue);
 	this.cmd("SetText", this.descriptLabel1, "Inserting Element: " + insertedValue);
 	this.cmd("Step");
-	this.cmd("SetText", this.descriptLabel1, "");
-	this.currentHeapSize++;
-	this.heapsize++;
-	this.arrayData[this.currentHeapSize] = insertedValue;
-	this.cmd("CreateCircle",this.circleObjs[this.currentHeapSize], "", this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+	// this.cmd("SetText", this.descriptLabel1, "");
 	
-	// if (this.treeRoot == null)
-	// {
-	// 	this.cmd("SetForegroundColor", this.circleObjs[this.currentHeapSize], Heap.FOREGROUND_COLOR);//added
- //    	this.cmd("SetBackgroundColor", this.circleObjs[this.currentHeapSize], Heap.BACKGROUND_COLOR);//added
-	// }
+	this.currentHeapSize++;
+	this.arrayData[this.currentHeapSize] = insertedValue;
+	//********
+	if(this.treeRoot == null)
+	{
+		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+		this.cmd("SetForegroundColor", this.nextIndex, Heap.FOREGROUND_COLOR);//added
+    	this.cmd("SetBackgroundColor", this.nextIndex, Heap.BACKGROUND_COLOR);//added
+    	this.cmd("Step");
+
+		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.startingX, this.STARTING_Y);
+		this.heapStructure[this.currentHeapSize].graphicID = this.nextIndex;
+		this.heapStructure[this.currentHeapSize].data = insertedValue;
+		this.heapStructure[this.currentHeapSize].x = this.HeapXPositions[this.currentHeapSize];
+		this.heapStructure[this.currentHeapSize].y = this.HeapYPositions[this.currentHeapSize];
+		this.treeRoot = this.heapStructure[this.currentHeapSize];
+
+    	this.nextIndex += 1;
+	}
+	else
+	{
+		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+		// this.cmd("CreateCircle",this.nextIndex, insertedValue, 100, 100);
+		this.cmd("Step");
+
+		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.HeapXPositions[i], this.HeapYPositions[i]);
+		// this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, 100, 100);
+		this.heapStructure[this.currentHeapSize].graphicID = this.nextIndex;
+		this.heapStructure[this.currentHeapSize].data = insertedValue;
+		this.heapStructure[this.currentHeapSize].x = this.HeapXPositions[this.currentHeapSize];
+		this.heapStructure[this.currentHeapSize].y = this.HeapYPositions[this.currentHeapSize];
+
+		this.heapStructure[this.currentHeapSize].parent = this.heapStructure[Math.floor(this.currentHeapSize/2)]
+		if(this.currentHeapSize%2 == 0)
+			this.heapStructure[Math.floor(this.currentHeapSize/2)].left = this.heapStructure[this.currentHeapSize];
+		else
+			this.heapStructure[Math.floor(this.currentHeapSize/2)].right = this.heapStructure[this.currentHeapSize];
+
+		this.nextIndex += 1;
+
+	}
+	//********
 
 	this.cmd("CreateLabel", this.descriptLabel2, insertedValue, 120, 45,  1);
 	if (this.currentHeapSize > 1)
 	{
-		this.cmd("Connect", this.circleObjs[Math.floor(this.currentHeapSize / 2)], this.circleObjs[this.currentHeapSize], Heap.LINK_COLOR);				
+		// this.cmd("Connect", this.circleObjs[Math.floor(this.currentHeapSize / 2)], this.circleObjs[this.currentHeapSize], Heap.LINK_COLOR);
+		this.cmd("Connect", this.heapStructure[Math.floor(this.currentHeapSize / 2)].graphicID, this.heapStructure[Math.floor(this.currentHeapSize)].graphicID, Heap.LINK_COLOR);
 	}
 	
-	this.cmd("Move", this.descriptLabel2, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+	// this.cmd("Move", this.descriptLabel2, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+	this.cmd("Move", this.descriptLabel2, this.heapStructure[this.currentHeapSize].x, this.heapStructure[this.currentHeapSize].y);
 	this.cmd("Step");
-	this.cmd("SetText", this.circleObjs[this.currentHeapSize], insertedValue);
+	// this.cmd("SetText", this.circleObjs[this.currentHeapSize], insertedValue);
 	this.cmd("delete", this.descriptLabel2);
 	this.cmd("SetText", this.arrayRects[this.currentHeapSize], insertedValue);
+
 	
 	var currentIndex = this.currentHeapSize;
 	var parentIndex = Math.floor(currentIndex / 2);
@@ -272,99 +350,77 @@ Heap.prototype.insertElementHeap = function(insertedValue)
 			this.setIndexHighlight(parentIndex, 0);
 		}
 	}
+	this.highlightID = this.nextIndex;
+}
+
+Heap.prototype.insert = function(insertedValue)
+{
+	if (this.currentHeapSize >= ARRAY_SIZE - 1)
+	{
+		this.cmd("SetText", this.descriptLabel1, "Heap Full!");
+		return this.commands;
+	}
+
+	// console.log("Inserting Element: " + insertedValue);
+	this.cmd("SetText", this.descriptLabel1, "Inserting Element: " + insertedValue);
+	this.cmd("Step");
+	// this.cmd("SetText", this.descriptLabel1, "");
 	
-	// return this.commands;
-}
+	this.currentHeapSize++;
+	this.arrayData[this.currentHeapSize] = insertedValue;
+	//********
+	if(this.treeRoot == null)
+	{
+		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.HeapXPositions[i], this.HeapYPositions[i]);
+		this.heapStructure[this.currentHeapSize].graphicID = this.nextIndex;
+		this.heapStructure[this.currentHeapSize].data = insertedValue;
+		this.heapStructure[this.currentHeapSize].x = this.HeapXPositions[this.currentHeapSize];
+		this.heapStructure[this.currentHeapSize].y = this.HeapYPositions[this.currentHeapSize];
+		this.treeRoot = this.heapStructure[this.currentHeapSize];
 
-Heap.prototype.insertElement = function(insertedVaule, visualize)
-{
-    //this.cmd("SetText", 0, "Inserting "+insertedValue);
-    //this.nextIndex++;
+		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.heapStructure[this.currentHeapSize].x, this.heapStructure[this.currentHeapSize].y);
+		this.cmd("SetForegroundColor", this.nextIndex, Heap.FOREGROUND_COLOR);//added
+    	this.cmd("SetBackgroundColor", this.nextIndex, Heap.BACKGROUND_COLOR);//added
+    	this.nextIndex += 1;
+	}
+	else
+	{
+		this.heapStructure[this.currentHeapSize] = new HeapNode(insertedValue, this.nextIndex, this.HeapXPositions[i], this.HeapYPositions[i]);
+		this.heapStructure[this.currentHeapSize].graphicID = this.nextIndex;
+		this.heapStructure[this.currentHeapSize].data = insertedValue;
+		this.heapStructure[this.currentHeapSize].x = this.HeapXPositions[this.currentHeapSize];
+		this.heapStructure[this.currentHeapSize].y = this.HeapYPositions[this.currentHeapSize];
 
-    if (this.treeRoot == null)
-    {
-        if(visualize)
-        {
-            this.cmd("CreateCircle", this.nextIndex, this.insertedValue,  this.startingX, Heap.STARTING_Y);
-            this.cmd("SetForegroundColor", this.nextIndex, Heap.FOREGROUND_COLOR);
-            this.cmd("SetBackgroundColor", this.nextIndex, Heap.BACKGROUND_COLOR);
-            this.cmd("Step");
-        }
-        this.treeRoot = new HeapNode(this.insertedValue, this.nextIndex, this.startingX, Heap.STARTING_Y);
-        this.nextIndex += 1;
-    }
-    else
-    {
-        if(visualize)
-        {
-            this.cmd("CreateCircle", this.nextIndex, this.insertedValue, 100, 100);
-            //this.cmd("SetForegroundColor", this.nextIndex, BST.FOREGROUND_COLOR);
-            //this.cmd("SetBackgroundColor", this.nextIndex, BST.BACKGROUND_COLOR);
-            this.cmd("Step");
-        }
-        var insertElem = new HeapNode(this.insertedValue, this.nextIndex, 100, 100);
+		this.heapStructure[this.currentHeapSize].parent = this.heapStructure[Math.floor(this.currentHeapSize/2)]
+		if(this.currentHeapSize%2 == 0)
+			this.heapStructure[Math.floor(this.currentHeapSize/2)].left = this.heapStructure[this.currentHeapSize];
+		else
+			this.heapStructure[Math.floor(this.currentHeapSize/2)].right = this.heapStructure[this.currentHeapSize];
 
-        this.nextIndex += 1;
-        this.insert(insertElem, this.treeRoot, visualize)
-        if(visualize) 	this.resizeTree();
-    }
-    this.highlightID = this.nextIndex;
-}
+		this.cmd("CreateCircle",this.nextIndex, insertedValue, this.heapStructure[this.currentHeapSize].x, this.heapStructure[this.currentHeapSize].y);
+		this.nextIndex += 1;
 
-Heap.prototype.insert = function(elem, tree, visualize)
-{
-    if (elem.data < tree.data)
-    {
-        if (tree.left == null)
-        {
-            //this.cmd("SetText", 0,"Found null tree, inserting element");
+	}
+	this.highlightID = this.nextIndex;
+	//********
 
-            //this.cmd("SetHighlight", elem.graphicID, 0);
-            tree.left=elem;
-            elem.parent = tree;
-            if(visualize) this.cmd("Connect", tree.graphicID, elem.graphicID, BST.LINK_COLOR);
-        }
-        else
-        {
-            //this.cmd("CreateHighlightCircle", this.highlightID, BST.HIGHLIGHT_CIRCLE_COLOR, tree.x, tree.y);
-            if(visualize)
-            {
-                this.cmd("Move", this.highlightID, tree.left.x, tree.left.y);
-                this.cmd("Step");
-            }
-            //this.cmd("Delete", this.highlightID);
-            this.insert(elem, tree.left, visualize);
-        }
-    }
-    else if (elem.data == tree.data)
-    {
-        if(visualize) this.cmd("Delete", elem.graphicID);
-    }
-    else
-    {
-        if (tree.right == null)
-        {
-            //	this.cmd("SetText",  0, "Found null tree, inserting element");
-            //	this.cmd("SetHighlight", elem.graphicID, 0);
-            tree.right=elem;
-            elem.parent = tree;
-            if(visualize) this.cmd("Connect", tree.graphicID, elem.graphicID, BST.LINK_COLOR);
-            elem.x = tree.x + BST.WIDTH_DELTA/2;
-            elem.y = tree.y + BST.HEIGHT_DELTA
-            if(visualize) this.cmd("Move", elem.graphicID, elem.x, elem.y);
-        }
-        else
-        {
-            //	this.cmd("CreateHighlightCircle", this.highlightID, BST.HIGHLIGHT_CIRCLE_COLOR, tree.x, tree.y);
-            if(visualize)
-            {
-                this.cmd("Move", this.highlightID, tree.right.x, tree.right.y);
-                this.cmd("Step");
-            }
-            //this.cmd("Delete", this.highlightID);
-            this.insert(elem, tree.right, visualize);
-        }
-    }
+	this.cmd("CreateLabel", this.descriptLabel2, insertedValue, 120, 45,  1);
+	if (this.currentHeapSize > 1)
+	{
+		// this.cmd("Connect", this.circleObjs[Math.floor(this.currentHeapSize / 2)], this.circleObjs[this.currentHeapSize], Heap.LINK_COLOR);
+		this.cmd("Connect", this.heapStructure[Math.floor(this.currentHeapSize / 2)].graphicID, this.heapStructure[Math.floor(this.currentHeapSize)].graphicID, Heap.LINK_COLOR);
+	}
+	
+	// this.cmd("Move", this.descriptLabel2, this.HeapXPositions[this.currentHeapSize], this.HeapYPositions[this.currentHeapSize]);
+	this.cmd("Move", this.descriptLabel2, this.heapStructure[this.currentHeapSize].x, this.heapStructure[this.currentHeapSize].y);
+	this.cmd("Step");
+	// this.cmd("SetText", this.circleObjs[this.currentHeapSize], insertedValue);
+	this.cmd("delete", this.descriptLabel2);
+	this.cmd("SetText", this.arrayRects[this.currentHeapSize], insertedValue);
+
+	this.resizeTree();
+
+	return this.heapStructure[this.currentHeapSize];
 }
 
 Heap.prototype.resizeTree = function()
@@ -380,6 +436,8 @@ Heap.prototype.resizeTree = function()
         else if (this.treeRoot.rightWidth > startingPoint)
         {
             startingPoint = Math.max(this.treeRoot.leftWidth, 2 * startingPoint - this.treeRoot.rightWidth);
+            // startingPoint = this.treeRoot.rightWidth;
+            // startingPoint = 2 * startingPoint - this.treeRoot.rightWidth;
         }
         this.setNewPositions(this.treeRoot, startingPoint, Heap.STARTING_Y, 0);
         this.animateNewPositions(this.treeRoot);
@@ -399,6 +457,7 @@ Heap.prototype.setNewPositions = function(tree, xPosition, yPosition, side)
         else if (side == 1)
         {
             xPosition = xPosition + tree.leftWidth;
+            // xPosition = xPosition + tree.rightWidth;
         }
         tree.x = xPosition;
         this.setNewPositions(tree.left, xPosition, yPosition + Heap.HEIGHT_DELTA, -1);
@@ -441,7 +500,8 @@ Heap.prototype.removeSmallest = function(dummy)
 	
 	this.cmd("SetText", this.descriptLabel1, "Removing element:");			
 	this.cmd("CreateLabel", this.descriptLabel2, this.arrayData[1],  this.HeapXPositions[1], this.HeapYPositions[1], 0);
-	this.cmd("SetText", this.circleObjs[1], "");
+	// this.cmd("SetText", this.circleObjs[1], "");
+	this.cmd("SetText", this.heapStructure[1].graphicID, "");
 	this.cmd("Move", this.descriptLabel2,  120, 40)
 	this.cmd("Step");
 	this.cmd("Delete", this.descriptLabel2);
@@ -452,7 +512,8 @@ Heap.prototype.removeSmallest = function(dummy)
 		this.cmd("SetText", this.arrayRects[1], "");
 		this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
 		this.swap(1,this.currentHeapSize);
-		this.cmd("Delete", this.circleObjs[this.currentHeapSize]);
+		// this.cmd("Delete", this.circleObjs[this.currentHeapSize]);
+		this.cmd("Delete", this.heapStructure[this.currentHeapSize].graphicID);
 		this.currentHeapSize--;
 		this.pushDown(1);				
 	}
@@ -499,6 +560,31 @@ Heap.prototype.heapify = function(index)
 	return this.commands;
 }
 
+Heap.prototype.swapWithParent = function()
+{
+	var index = 0
+
+	for(i=1;i<this.currentHeapSize;i++)
+		if(this.heapStructure[i] == currentHighlightNode)
+			index = i
+
+	if(index > this.currentHeapSize || index <= 1)
+	{
+		this.cmd("SetText", this.descriptLabel1, "Swapping not possible!");
+		return 0;
+	}
+
+	parent = parseInt(index/2);
+	this.cmd("SetText", this.descriptLabel1, 'swapping indices '+(index-1)+' and its parent '+(parent-1));
+
+	index1 = index;
+	index2 = parent;
+
+	// console.log('swapping index '+(index1+1)+' and '+(index2+1));
+	this.swap(index1, index2);
+	return index-1;
+}
+
 Heap.prototype.pushDown = function(index)
 {
 	var smallestIndex;
@@ -542,24 +628,15 @@ Heap.prototype.pushDown = function(index)
 	}
 }
 
-Heap.prototype.clear = function()//TODO:  Make me undoable!!
-{
-	
-	while (this.currentHeapSize > 0)
-	{
-		this.cmd("Delete", this.circleObjs[this.currentHeapSize]);
-		this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
-		this.currentHeapSize--;
-	}
-	return this.commands;
-}
-
 Heap.prototype.swap = function(index1, index2)
 {
+	// console.log('swapping index '+index1+' and '+index2);
 	this.cmd("SetText", this.arrayRects[index1], "");
 	this.cmd("SetText", this.arrayRects[index2], "");
-	this.cmd("SetText", this.circleObjs[index1], "");
-	this.cmd("SetText", this.circleObjs[index2], "");
+	// this.cmd("SetText", this.circleObjs[index1], "");
+	this.cmd("SetText", this.heapStructure[index1].graphicID, "");
+	// this.cmd("SetText", this.circleObjs[index2], "");
+	this.cmd("SetText", this.heapStructure[index2].graphicID, "");
 	this.cmd("CreateLabel", this.swapLabel1, this.arrayData[index1], this.ArrayXPositions[index1],ARRAY_Y_POS);
 	this.cmd("CreateLabel", this.swapLabel2, this.arrayData[index2], this.ArrayXPositions[index2],ARRAY_Y_POS);
 	this.cmd("CreateLabel", this.swapLabel3, this.arrayData[index1], this.HeapXPositions[index1],this.HeapYPositions[index1]);
@@ -568,111 +645,38 @@ Heap.prototype.swap = function(index1, index2)
 	this.cmd("Move", this.swapLabel2, this.ArrayXPositions[index1],ARRAY_Y_POS)
 	this.cmd("Move", this.swapLabel3, this.HeapXPositions[index2],this.HeapYPositions[index2])
 	this.cmd("Move", this.swapLabel4, this.HeapXPositions[index1],this.HeapYPositions[index1])
+	
 	var tmp = this.arrayData[index1];
 	this.arrayData[index1] = this.arrayData[index2];
 	this.arrayData[index2] = tmp;
+	var tmp1 = this.heapStructure[index1].data;
+	this.heapStructure[index1].data = this.heapStructure[index2].data;
+	this.heapStructure[index2].data = tmp1;
+
 	this.cmd("Step")
 	this.cmd("SetText", this.arrayRects[index1], this.arrayData[index1]);
 	this.cmd("SetText", this.arrayRects[index2], this.arrayData[index2]);
-	this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
-	this.cmd("SetText", this.circleObjs[index2], this.arrayData[index2]);
+	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
+	this.cmd("SetText", this.heapStructure[index1].graphicID, this.arrayData[index1]);
+	// this.cmd("SetText", this.circleObjs[index2], this.arrayData[index2]);
+	this.cmd("SetText", this.heapStructure[index2].graphicID, this.arrayData[index2]);
 	this.cmd("Delete", this.swapLabel1);
 	this.cmd("Delete", this.swapLabel2);
 	this.cmd("Delete", this.swapLabel3);
-	this.cmd("Delete", this.swapLabel4);			
+	this.cmd("Delete", this.swapLabel4);
 }
 
-function Height(tree)
+Heap.prototype.clear = function()//TODO:  Make me undoable!!
 {
-    if( tree == null) return 0;
-    else
-    {
-        if( tree.left == null && tree.right == null) return 0;
-        var leftHeight = Height(tree.left);
-        var rightHeight = Height(tree.right);
-        return Math.max(leftHeight, rightHeight) + 1;
-    }
-}
-
-function NodesCount(tree)
-{
-    if( tree == null) return 0;
-    else
-    {
-        var leftCount = NodesCount(tree.left);
-        var rightCount = NodesCount(tree.right);
-        return leftCount + rightCount + 1;
-    }
-}
-
-function Test() 
-{
-    var inorderInput = document.getElementById("q4").value;
-    var nodes = inorderInput.split(" ");
-    this.traversal = [];
-    this.Inorder(this.currentAlg.treeRoot);
-    var e4 = document.getElementById('e4');
-    e4.style.color = "Green";
-    var i = 0;
-    while( i < traversal.length)
-    {
-        if(traversal[i] != nodes[i])
-        {
-            e4.innerHTML="Traversal sequence is wrong!! Correct one : " + traversal;
-            e4.style.color = "Red";
-            break;
-
-        }
-        i++;
-    }
-    e4.innerHTML="Correct!!";
-
-    this.currentAlg.insertElement(56, false);
-    var findQ1 = FindElement(this.currentAlg.treeRoot, 56);
-    var parentQ1 = findQ1.parent;
-
-    var q1 = document.getElementById("q1").value;
-    var e1 = document.getElementById('e1');
-    e1.style.color = "Green";
-    if(parentQ1.data != q1) {
-        e1.innerHTML="Wrong Answer!!. Correct one " + parentQ1.data;
-        e1.style.color = "Red";
-    }
-    else e1.innerHTML="Correct!!";
-
-    var q2 = document.getElementById("q2").value;
-    var left = NodesCount(this.currentAlg.treeRoot.left);
-    var right = NodesCount(this.currentAlg.treeRoot.right);
-    var q2Ans = left + " " + right;
-
-    var e2 = document.getElementById('e2');
-    e2.style.color = "Green";
-    if(q2Ans != q2){
-        e2.innerHTML="Wrong Answer!!. Correct one : left nodes = " + left + ", right nodes = "+ right;
-        e2.style.color = "Red";
-    }
-    else e2.innerHTML="Correct!!";
-
-    var q3 = document.getElementById("q3").value;
-    var height = Height(this.currentAlg.treeRoot);
-    var e3 = document.getElementById('e3');
-    e3.style.color = "Green";
-    if(height != q3){
-        e3.innerHTML="Wrong Answer!!. Correct one : height = " + height;
-        e3.style.color = "Red";
-    }
-    else e3.innerHTML="Correct!!";
-}
-
-var newNode;
-function GetNewNode()
-{
-    newNode = RandomInt(1, 100);
-}
-
-function RandomInt(min, max)
-{
-    return Math.floor(Math.random() * (max - min)) + min;
+	
+	while (this.currentHeapSize > 0)
+	{
+		// this.cmd("Delete", this.circleObjs[this.currentHeapSize]);
+		this.cmd("Delete", this.heapStructure[this.currentHeapSize].graphicID);
+		this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
+		this.currentHeapSize--;
+	}
+	return this.commands;
 }
 
 function HeapNode(val, id, initialX, initialY)
@@ -688,30 +692,32 @@ function HeapNode(val, id, initialX, initialY)
 
 Heap.prototype.disableUI = function(event)
 {
-	// this.insertField.disabled = true;
-	// this.insertIndex.disabled = true;
-	// this.insertButton.disabled = true;
-	// this.removeSmallestButton.disabled = true;
-	// this.clearHeapButton.disabled = true;
-	// this.buildHeapButton.disabled = true;
+	this.insertField.disabled = true;
+	this.insertIndex.disabled = true;
+	this.insertButton.disabled = true;
+	this.removeSmallestButton.disabled = true;
+	this.clearHeapButton.disabled = true;
+	this.buildHeapButton.disabled = true;
+	this.heapifyButton.disabled = true;
 }
 
 Heap.prototype.enableUI = function(event)
 {
-	// this.insertField.disabled = false;
-	// this.insertIndex.disabled = false;
-	// this.insertButton.disabled = false;
-	// this.removeSmallestButton.disabled = false;
-	// this.clearHeapButton.disabled = false;
-	// this.buildHeapButton.disabled = false;
+	this.insertField.disabled = false;
+	this.insertIndex.disabled = false;
+	this.insertButton.disabled = false;
+	this.removeSmallestButton.disabled = false;
+	this.clearHeapButton.disabled = false;
+	this.buildHeapButton.disabled = false;
+	this.heapifyButton.disabled = false;
 }
 
 Heap.prototype.moveLeft = function()
 {
-    if(currentHighlightNode.left==null)
-    	return false;
+    if(currentHighlightNode.left==null)return false;
 
     this.unhighlightNode(currentHighlightNode.graphicID);
+
     currentHighlightNode = currentHighlightNode.left;
     this.highlightNode(currentHighlightNode.graphicID);
     return true;
@@ -719,10 +725,11 @@ Heap.prototype.moveLeft = function()
 
 Heap.prototype.moveRight = function()
 {
-    if(currentHighlightNode.right==null)
-    	return false;
+    if(currentHighlightNode.right==null)return false;
 
     this.unhighlightNode(currentHighlightNode.graphicID);
+
+
     currentHighlightNode = currentHighlightNode.right;
     this.highlightNode(currentHighlightNode.graphicID);
 
@@ -732,10 +739,10 @@ Heap.prototype.moveRight = function()
 
 Heap.prototype.moveToParent = function()
 {
-    if(currentHighlightNode.parent==null)
-     	return false;
+    if(currentHighlightNode.parent==null)return false;
 
     this.unhighlightNode(currentHighlightNode.graphicID);
+
     currentHighlightNode = currentHighlightNode.parent;
     this.highlightNode(currentHighlightNode.graphicID);
 
@@ -743,324 +750,19 @@ Heap.prototype.moveToParent = function()
     return true;
 }
 
-Heap.prototype.highlightNode = function(graphicID)
-{
+Heap.prototype.highlightNode = function(graphicID){
     this.cmd("SetForegroundColor", graphicID , Heap.BACKGROUND_COLOR);
     this.cmd("SetBackgroundColor", graphicID , Heap.FOREGROUND_COLOR);
 }
 
-Heap.prototype.unhighlightNode = function(graphicID)
-{
+Heap.prototype.unhighlightNode = function(graphicID){
     this.cmd("SetForegroundColor", graphicID , "#000000");
     this.cmd("SetBackgroundColor", graphicID , "#FFFFFF");
 }
 
-Heap.prototype.deleteElement = function(deletedValue)
+function RandomInt(min, max)
 {
-    this.commands = [];
-    this.cmd("SetText", 0, "Deleting "+deletedValue);
-    this.cmd("Step");
-    this.cmd("SetText", 0, "");
-    this.highlightID = this.nextIndex++;
-    this.treeDelete(this.treeRoot, deletedValue);
-    this.cmd("SetText", 0, "");
-    // Do delete
-    return this.commands;
-}
-
-Heap.prototype.treeDelete = function(tree, valueToDelete)
-{
-    var leftchild = false;
-    if (tree != null)
-    {
-        if (tree.parent != null)
-        {
-            leftchild = tree.parent.left == tree;
-        }
-        this.cmd("SetHighlight", tree.graphicID, 1);
-        if (valueToDelete < tree.data)
-        {
-            this.cmd("SetText", 0, valueToDelete + " < " + tree.data + ".  Looking at left subtree");
-        }
-        else if (valueToDelete > tree.data)
-        {
-            this.cmd("SetText",  0, valueToDelete + " > " + tree.data + ".  Looking at right subtree");
-        }
-        else
-        {
-            this.cmd("SetText",  0, valueToDelete + " == " + tree.data + ".  Found node to delete");
-        }
-        this.cmd("Step");
-        this.cmd("SetHighlight",  tree.graphicID, 0);
-
-        if (valueToDelete == tree.data)
-        {
-            if (tree.left == null && tree.right == null)
-            {
-                this.cmd("SetText", 0, "Node to delete is a leaf.  Delete it.");
-                this.cmd("Delete", tree.graphicID);
-                if (leftchild && tree.parent != null)
-                {
-                    tree.parent.left = null;
-                }
-                else if (tree.parent != null)
-                {
-                    tree.parent.right = null;
-                }
-                else
-                {
-                    treeRoot = null;
-                }
-                this.resizeTree();
-                this.cmd("Step");
-
-            }
-            else if (tree.left == null)
-            {
-                this.cmd("SetText", 0, "Node to delete has no left child.  \nSet parent of deleted node to right child of deleted node.");
-                if (tree.parent != null)
-                {
-                    this.cmd("Disconnect",  tree.parent.graphicID, tree.graphicID);
-                    this.cmd("Connect",  tree.parent.graphicID, tree.right.graphicID, BST.LINK_COLOR);
-                    this.cmd("Step");
-                    this.cmd("Delete", tree.graphicID);
-                    if (leftchild)
-                    {
-                        tree.parent.left = tree.right;
-                    }
-                    else
-                    {
-                        tree.parent.right = tree.right;
-                    }
-                    tree.right.parent = tree.parent;
-                }
-                else
-                {
-                    this.cmd("Delete", tree.graphicID);
-                    this.treeRoot = tree.right;
-                    this.treeRoot.parent = null;
-                }
-                this.resizeTree();
-            }
-            else if (tree.right == null)
-            {
-                this.cmd("SetText", 0, "Node to delete has no right child.  \nSet parent of deleted node to left child of deleted node.");
-                if (tree.parent != null)
-                {
-                    this.cmd("Disconnect", tree.parent.graphicID, tree.graphicID);
-                    this.cmd("Connect", tree.parent.graphicID, tree.left.graphicID, BST.LINK_COLOR);
-                    this.cmd("Step");
-                    this.cmd("Delete", tree.graphicID);
-                    if (leftchild)
-                    {
-                        tree.parent.left = tree.left;
-                    }
-                    else
-                    {
-                        tree.parent.right = tree.left;
-                    }
-                    tree.left.parent = tree.parent;
-                }
-                else
-                {
-                    this.cmd("Delete",  tree.graphicID);
-                    this.treeRoot = tree.left;
-                    this.treeRoot.parent = null;
-                }
-                this.resizeTree();
-            }
-            else // tree.left != null && tree.right != null
-            {
-                this.cmd("SetText", 0, "Node to delete has two childern.  \nFind largest node in left subtree.");
-
-                this.highlightID = this.nextIndex;
-                this.nextIndex += 1;
-                this.cmd("CreateHighlightCircle", this.highlightID, BST.HIGHLIGHT_CIRCLE_COLOR, tree.x, tree.y);
-                var tmp = tree;
-                tmp = tree.left;
-                this.cmd("Move", this.highlightID, tmp.x, tmp.y);
-                this.cmd("Step");
-                while (tmp.right != null)
-                {
-                    tmp = tmp.right;
-                    this.cmd("Move", this.highlightID, tmp.x, tmp.y);
-                    this.cmd("Step");
-                }
-                this.cmd("SetText", tree.graphicID, " ");
-                var labelID = this.nextIndex;
-                this.nextIndex += 1;
-                this.cmd("CreateLabel", labelID, tmp.data, tmp.x, tmp.y);
-                tree.data = tmp.data;
-                this.cmd("Move", labelID, tree.x, tree.y);
-                this.cmd("SetText", 0, "Copy largest value of left subtree into node to delete.");
-
-                this.cmd("Step");
-                this.cmd("SetHighlight", tree.graphicID, 0);
-                this.cmd("Delete", labelID);
-                this.cmd("SetText", tree.graphicID, tree.data);
-                this.cmd("Delete", this.highlightID);
-                this.cmd("SetText", 0,"Remove node whose value we copied.");
-
-                if (tmp.left == null)
-                {
-                    if (tmp.parent != tree)
-                    {
-                        tmp.parent.right = null;
-                    }
-                    else
-                    {
-                        tree.left = null;
-                    }
-                    this.cmd("Delete", tmp.graphicID);
-                    this.resizeTree();
-                }
-                else
-                {
-                    this.cmd("Disconnect", tmp.parent.graphicID,  tmp.graphicID);
-                    this.cmd("Connect", tmp.parent.graphicID, tmp.left.graphicID, BST.LINK_COLOR);
-                    this.cmd("Step");
-                    this.cmd("Delete", tmp.graphicID);
-                    if (tmp.parent != tree)
-                    {
-                        tmp.parent.right = tmp.left;
-                        tmp.left.parent = tmp.parent;
-                    }
-                    else
-                    {
-                        tree.left = tmp.left;
-                        tmp.left.parent = tree;
-                    }
-                    this.resizeTree();
-                }
-
-            }
-        }
-        else if (valueToDelete < tree.data)
-        {
-            if (tree.left != null)
-            {
-                this.cmd("CreateHighlightCircle", this.highlightID, BST.HIGHLIGHT_CIRCLE_COLOR, tree.x, tree.y);
-                this.cmd("Move", this.highlightID, tree.left.x, tree.left.y);
-                this.cmd("Step");
-                this.cmd("Delete", this.highlightID);
-            }
-            this.treeDelete(tree.left, valueToDelete);
-        }
-        else
-        {
-            if (tree.right != null)
-            {
-                this.cmd("CreateHighlightCircle", this.highlightID, BST.HIGHLIGHT_CIRCLE_COLOR, tree.x, tree.y);
-                this.cmd("Move", this.highlightID, tree.right.x, tree.right.y);
-                this.cmd("Step");
-                this.cmd("Delete", this.highlightID);
-            }
-            this.treeDelete(tree.right, valueToDelete);
-        }
-    }
-    else
-    {
-        this.cmd("SetText", 0, "Elemet "+valueToDelete+" not found, could not delete");
-    }
-}
-
-Heap.prototype.deleteCurrentHighlightedNode = function(node, replacementNode)
-{
-    if(node.left==null && node.right==null){  //no need of replacement node
-        this.cmd("Delete", node.graphicID);
-        this.cmd("Step");
-        if(node.parent!=null && node.parent.data>node.data)  //left child
-            node.parent.left = null;
-        else if(node.parent!=null)node.parent.right = null;
-        node.parent = null;
-
-        currentAlg.highlightNode(currentAlg.treeRoot.graphicID);
-        this.resizeTree();
-        return null;
-    }
-    else if(node.left==null || node.right==null) {
-        if(replacementNode==null)return ;
-        var nchild = (node.left==null)?node.right:node.left;
-        if(node.parent!=null)this.cmd("Disconnect", node.parent.graphicID, node.graphicID);
-        this.cmd("Delete", node.graphicID);
-        this.cmd("Step");
-        var rparent = replacementNode.parent;
-        var rchild = (replacementNode.left == null) ? replacementNode.right : replacementNode.left;
-
-        if(rchild!=null && rparent!=node) {
-            this.cmd("Connect", rparent.graphicID, rchild.graphicID, BST.LINK_COLOR);
-            this.cmd("Disconnect", replacementNode.graphicID, rchild.graphicID);
-        }
-        if(node.parent!=null)this.cmd("Connect", node.parent.graphicID, replacementNode.graphicID, BST.LINK_COLOR);
-        if(replacementNode!=nchild)this.cmd("Connect", replacementNode.graphicID, nchild.graphicID, BST.LINK_COLOR);
-        if(rparent!=null)this.cmd("Disconnect", rparent.graphicID, replacementNode.graphicID);
-
-
-        if (rparent!=null && rparent.data > replacementNode.data)
-            rparent.left = rchild;
-        else if(rparent!=null)rparent.right = rchild;
-        if(rchild!=null)rchild.parent = rparent;
-
-        if(node.parent!=null && node.parent.data>node.data)  //left child
-            node.parent.left = replacementNode;
-        else
-        if(node.parent!=null)node.parent.right = replacementNode;
-        replacementNode.parent = node.parent;
-
-        if(nchild!=replacementNode) {
-            replacementNode.right = nchild;
-            nchild.parent = replacementNode;
-        }
-    }
-    else {  //node has two children
-        if(replacementNode==null)return ;
-        if(node.parent!=null)this.cmd("Disconnect", node.parent.graphicID, node.graphicID);
-        this.cmd("Delete", node.graphicID);
-        this.cmd("Step");
-        var rparent = replacementNode.parent;
-        var rchild = (replacementNode.left == null) ? replacementNode.right : replacementNode.left;
-        var nleft = node.left;
-        var nright = node.right;
-
-        if(rchild!=null && rparent!=node) {
-            this.cmd("Connect", rparent.graphicID, rchild.graphicID, BST.LINK_COLOR);
-            this.cmd("Disconnect", replacementNode.graphicID, rchild.graphicID);
-        }
-        if(node.parent!=null)this.cmd("Connect", node.parent.graphicID, replacementNode.graphicID, BST.LINK_COLOR);
-        this.cmd("Connect", replacementNode.graphicID, nleft.graphicID, BST.LINK_COLOR);
-        this.cmd("Connect", replacementNode.graphicID, nright.graphicID, BST.LINK_COLOR);
-        if(rparent!=null)this.cmd("Disconnect", rparent.graphicID, replacementNode.graphicID);
-
-        if (rparent!=null && rparent.data > replacementNode.data)
-            rparent.left = rchild;
-        else if(rparent!=null)
-            rparent.right = rchild;
-        if(rchild!=null)rchild.parent = rparent;
-
-        if(node.parent!=null && node.parent.data>node.data)  //left child
-            node.parent.left = replacementNode;
-        else if(node.parent!=null)
-            node.parent.right = replacementNode;
-        replacementNode.parent = node.parent;
-
-        if(nleft!=replacementNode) {
-            replacementNode.left = nleft;
-            nleft.parent = replacementNode;
-        }
-        if(nright!=replacementNode){
-            replacementNode.right = nright;
-            nright.parent = replacementNode;
-        }
-
-    }
-    if(node==currentAlg.treeRoot)
-        currentAlg.treeRoot = replacementNode;
-
-    currentHighlightNode = replacementNode;
-    currentAlg.unhighlightNode(currentAlg.treeRoot.graphicID);
-    currentAlg.highlightNode(currentHighlightNode.graphicID);
-    this.resizeTree();
-    return node;
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 Heap.prototype.getNode1 = function(data,tree)
@@ -1102,18 +804,6 @@ Heap.prototype.resetAnswer = function()
     this.answers[HeapUtils.getQuestionID()] = document.getElementById(HeapUtils.getAnswerID()).value = '';
 }
 
-Heap.prototype.test = function()
-{
-	//var sys = require("sys");
-    //var StateChecker = require('./AlgorithmLibrary/StateChecker.js');
-    try {
-        console.log(typeof StateChecker);
-        console.log(StateChecker.compareLists([1, 2, 3], [1, 2, 3]));
-    }catch(e){
-        console.log("ye",e);
-    }
-}
-
 var currentAlg;
 var currentHighlightNode;
 var initCommands;
@@ -1126,11 +816,11 @@ function init()
     initCommands = currentAlg.commands;
 
     addEventsToNode(animManag);
-    insertNodeToActionListener();
+    insertNodesToActionListener();
 }
 
-function addEventsToNode(animManag)
-{
+
+function addEventsToNode(animManag){
     document.getElementById("menuSimple").style.display = "none";
     var canvas = document.getElementById('canvas'),
         cLeft = canvas.offsetLeft,
@@ -1149,13 +839,14 @@ function addEventsToNode(animManag)
         var cli = true;
         currentAlg.actionElements.forEach(function(element) {
             try {
+            	// console.log(element.graphicID)
 
                 var manager = animManag.animatedObjects,
                     id = element.graphicID,
                     ex = manager.getNodeX(id),
                     ey = manager.getNodeY(id),
                     er = manager.getNodeRadius(id);
-                //alert(currentHighlightNode.highlightID+" "+id);
+                // console.log(currentHighlightNode.graphicID+" "+id);
                 if (x > ex - er && x < ex + er &&
                     y > ey - er && y < ey + er) {
                     //alert("hey"+currentAlg.deleteElem);
@@ -1177,6 +868,7 @@ function addEventsToNode(animManag)
         if(cli)ctxMenu.style.display = "none";
 
     }, false);
+
 }
 
 function insertNodeToActionListener(node)
@@ -1184,6 +876,7 @@ function insertNodeToActionListener(node)
     if(currentAlg.actionElements.indexOf(node)==-1)
         currentAlg.actionElements.push(node);
 }
+
 
 function insertNodesToActionListener()
 {
@@ -1207,17 +900,74 @@ function deleteNodeFromActionListener(node)
 }
 
 
-//
-//function reset()
-//{
-//    animManag = initCanvas();
-//    currentAlg = new Heap(currentAlg.values, animManag, canvas.width, canvas.height);
-//    currentHighlightNode = currentAlg.treeRoot;
-//    initCommands = currentAlg.commands;
-//}
+// Heap.prototype.reset = function()
+// {
+// 	this.currentHeapSize = 0;
+// }
 
 Heap.prototype.setIndexHighlight = function(index, highlightVal)
 {
-	this.cmd("SetHighlight", this.circleObjs[index], highlightVal);
+	// this.cmd("SetHighlight", this.circleObjs[index], highlightVal);
+	this.cmd("SetHighlight", this.heapStructure[index].graphicID, highlightVal);
 	this.cmd("SetHighlight", this.arrayRects[index], highlightVal);
+}
+
+Heap.prototype.rename = function(value)
+{
+	var index = 0
+
+	for(i=1;i<this.currentHeapSize;i++)
+		if(this.heapStructure[i] == currentHighlightNode)
+			index = i
+
+	// console.log('swapping index '+index1+' and '+index2);
+	this.cmd("SetText", this.arrayRects[index], "");
+	// this.cmd("SetText", this.circleObjs[index1], "");
+	this.cmd("SetText", this.heapStructure[index].graphicID, "");
+	// this.cmd("SetText", this.circleObjs[index2], "");
+	
+	this.arrayData[index] = parseInt(value);
+	this.heapStructure[index].data = parseInt(value);
+
+	this.cmd("Step")
+	this.cmd("SetText", this.arrayRects[index], this.arrayData[index]);
+	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
+	this.cmd("SetText", this.heapStructure[index].graphicID, this.arrayData[index]);
+}
+
+Heap.prototype.delete = function()
+{
+
+	if (this.currentHeapSize == 0)
+	{
+		console.log('Current Heap size = 0')
+		this.cmd("SetText", this.descriptLabel1, "Heap is empty, cannot remove smallest element");
+		return null;
+	}
+
+	this.cmd("SetText", this.descriptLabel1, "Removing element:");
+
+	var deletedNode = this.heapStructure[this.currentHeapSize];
+	// console.log('swapping index '+index1+' and '+index2);
+	this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
+	// this.cmd("SetText", this.circleObjs[index1], "");
+	this.cmd("SetText", this.heapStructure[this.currentHeapSize].graphicID, "");
+	// this.cmd("SetText", this.circleObjs[index2], "");
+
+	this.cmd("Step");
+	this.cmd("SetText", this.arrayRects[this.currentHeapSize], "");
+	// this.cmd("SetText", this.circleObjs[index1], this.arrayData[index1]);
+	this.cmd("SetText", this.heapStructure[this.currentHeapSize].graphicID, this.arrayData[this.currentHeapSize]);
+
+	if(this.heapStructure[this.currentHeapSize].parent.left == this.heapStructure[this.currentHeapSize])
+		this.heapStructure[this.currentHeapSize].parent.left = null;
+	else
+		this.heapStructure[this.currentHeapSize].parent.right = null;
+	this.arrayData[this.currentHeapSize] = null
+
+	this.cmd("Delete", this.heapStructure[this.currentHeapSize].graphicID);
+	this.currentHeapSize -= 1;
+
+	return deletedNode;
+
 }
