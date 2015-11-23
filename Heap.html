@@ -244,10 +244,10 @@
                     <button id="Delete" href onclick="deleteElementHeap();" style="width:100%">Delete Node</button>
                     <script>
                         function deleteElementHeap(){
-                            currentAlg.addStep("D");
                             document.getElementById("menuSimple").style.display = "none";
                             HeapUtils.clearCanvas();
                             var deletedElement = currentAlg.delete();
+                            currentAlg.addStep("D"+deletedElement.data);
                             if(currentAlg.returnHighElement() == deletedElement) //So that the highlighting doesn't disappear
                                 moveToParentHeap();
 
