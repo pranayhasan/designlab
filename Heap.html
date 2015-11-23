@@ -215,10 +215,7 @@
                             HeapUtils.clearCanvas();
 
                             var nodeRenamed = currentAlg.rename(parseInt(replacedNumber));
-                            //alert(nodeInserted);
-                            //add event
-                            // if(HeapUtils.validate(nodeRenamed)){
-                            //     insertNodeToActionListener(nodeRenamed);}
+
                             currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
                             currentAlg.animationManager.skipForward();
                             currentAlg.animationManager.clearHistory();
@@ -248,49 +245,20 @@
                     <script>
                         function deleteElementHeap(){
                             currentAlg.addStep("D");
-                        
                             document.getElementById("menuSimple").style.display = "none";
-                            // if(!(currentHighlightNode.left==null && currentHighlightNode.right==null)) {
-                            //     currentAlg.deleteElem = true;
-                            //     // alert("Select node to replace deleted node");
-                            //     alert("Deletion Not possible");
-                            //     return ;
-                            // }
-
                             HeapUtils.clearCanvas();
                             var deletedElement = currentAlg.delete();
+                            if(currentAlg.returnHighElement() == deletedElement) //So that the highlighting doesn't disappear
+                                moveToParentHeap();
+
                             //alert("del"+deletedElement.graphicID);
                             if(HeapUtils.validate(deletedElement))
                                 deleteNodeFromActionListener(deletedElement);
                             currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
                             currentAlg.animationManager.skipForward();
                             currentAlg.animationManager.clearHistory();
-
                         }
 
-                        function dafterNodeSelected(){
-                            var replacementNode = null;
-//                                    do {
-//                                        var numberToReplace = HeapUtils.inputNumber("Enter node number to replace next deleted node(Enter -1 for null value)");
-//                                        replacementNode = currentAlg.getNode(numberToReplace);
-//                                    }while(replacementNode==currentHighlightNode);
-
-                            replacementNode = currentAlg.getNode(currentAlg.numberToReplace);
-                            currentAlg.addStep("RE"+currentAlg.numberToReplace);
-                            HeapUtils.clearCanvas();
-
-                            var temp = currentHighlightNode;
-                            while(currentAlg.moveToParent());
-                            var deletedElement = currentAlg.deleteCurrentHighlightedNode(temp, replacementNode);
-                            //alert("del"+deletedElement.graphicID);
-                            if(HeapUtils.validate(deletedElement))
-                                deleteNodeFromActionListener(deletedElement);
-                            currentAlg.animationManager.StartNewAnimation(currentAlg.commands);
-                            currentAlg.animationManager.skipForward();
-                            currentAlg.animationManager.clearHistory();
-                            document.getElementById("menuSimple").style.display = "none";
-
-                        }
                     </script>
 
                 </td></tr>
@@ -369,44 +337,39 @@
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
 
 
-                        <input type="radio" name="radio1" value="i2">Insert 56 to the min Heap.<br>
+                        <input type="radio" name="radio1" value="i2">Delete top element min Heap.<br>
                         Output: <textarea class="scrollabletextbox" id="answeri2" readonly></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
 
-                        <input type="radio" name="radio1" value="i3">Insert 68 to the min Heap.<br>
+                        <input type="radio" name="radio1" value="i3">Insert 56 to the min Heap.<br>
                         Output: <textarea class="scrollabletextbox" id="answeri3" readonly></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
 
-
-                        <input type="radio" name="radio1" value="i4">Mark the parent node of the newly added node?<br>
-                        Output: <textarea class="scrollabletextbox" id="answeri4" readonly></textarea>
+                        <br><input type="radio" name="radio1" value="i4">Insert 21 (Don't swap elements to make final insertion) and heapify its parent<br>
+                        Output: <textarea class="scrollabletextbox" id="answeri4"></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
-                        <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br><br>
+                        <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
 
-                        <br><input type="radio" name="radio1" value="i5">What is the height of the newly formed tree?<br>
+                        <br><input type="radio" name="radio1" value="i5">Insert 23, 54, 12 (Don't swap elements to make final insertion) and perform make heap on resultant array<br>
                         Output: <textarea class="scrollabletextbox" id="answeri5"></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
 
-                        <br><input type="radio" name="radio1" value="i6">Insert nodes to make a full binary tree.<br>
-                        Output: <textarea class="scrollabletextbox" id="answeri6"></textarea>
-                        <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
-                        <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
                     </form>
                 </div>
 
                 <div id = "delete_questions" style="display: none">
                     <b><p>Questions on Delete Operation</p></b>
                     <form action="">
-                        <input type="radio" name="radio2" value="d1" checked="checked">Delete the root of the tree<br>
+                        <input type="radio" name="radio2" value="d1" checked="checked">Delete element from the Heap<br>
                         Output: <textarea class="scrollabletextbox" id="answerd1" readonly></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
 
 
-                        <input type="radio" name="radio2" value="d2">Delete the 3rd largest value in the remaining tree<br>
+                        <input type="radio" name="radio2" value="d2">Delete another element in the tree<br>
                         Output: <textarea class="scrollabletextbox" id="answerd2" readonly></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
@@ -419,11 +382,6 @@
 
                         <input type="radio" name="radio2" value="d4">What is the height of the newly formed tree?<br>
                         Output: <textarea class="scrollabletextbox" id="answerd4" readonly></textarea>
-                        <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
-                        <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
-
-                        <input type="radio" name="radio2" value="d5">Delete necessary nodes to make a full binary tree.<br>
-                        Output: <textarea class="scrollabletextbox" id="answerd5" readonly></textarea>
                         <input type ="button" onclick="currentAlg.submitAnswer()" value="Submit" />
                         <input type ="button" onclick="currentAlg.resetAnswer()" value="Reset" /><br>
 

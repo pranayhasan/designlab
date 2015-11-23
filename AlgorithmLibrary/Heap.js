@@ -63,7 +63,6 @@ Math.seededRandom = function(min, max)
     return parseInt(min + rnd * (max - min));
 }
 
-
 Heap.prototype.init = function(am, w, h)
 {
 	this.answers = {};
@@ -78,7 +77,7 @@ Heap.prototype.init = function(am, w, h)
 	fn.call(this,am);
 
 
-	this.addControls();
+	// this.addControls();
 	this.HeapXPositions = [0, 450, 250, 650, 150, 350, 550, 750, 100, 200, 300, 400, 500, 600,
 					  700, 800, 075, 125, 175, 225, 275, 325, 375, 425, 475, 525, 575, 
 					  625, 675, 725, 775, 825];
@@ -102,8 +101,7 @@ Heap.prototype.init = function(am, w, h)
 
 Heap.prototype.addControls =  function() //Inserts elements in diplay and sets callbacks
 {
-	//ADMIN
-	addCheckboxToAlgorithmBar("ADMIN");
+	//ADMIN controls
 	this.newArrayButton = addControlToAlgorithmBar("Button", "Generate Array");
 	this.newArrayButton.onclick = this.newArrayCallback.bind(this);
 
@@ -112,7 +110,7 @@ Heap.prototype.addControls =  function() //Inserts elements in diplay and sets c
 	this.insertField.onkeydown = this.returnSubmit(this.insertField, this.insertCallback.bind(this), 4, true);
 	this.insertButton.onclick = this.insertCallback.bind(this);
 
-	this.removeSmallestButton = addControlToAlgorithmBar("Button", "Remove Smallest");
+	this.removeSmallestButton = addControlToAlgorithmBar("Button", "Delete Smallest");
 	this.removeSmallestButton.onclick = this.removeSmallestCallback.bind(this);
 
 	this.buildHeapButton = addControlToAlgorithmBar("Button", "Make Heap");
@@ -184,7 +182,7 @@ Heap.prototype.createArray = function()
 {
 	this.heapStructure = new Array(ARRAY_SIZE);
 	this.heapStructure[0] = new HeapNode(0,0,this.ARRAY_INITIAL_X+30, ARRAY_LABEL_Y_POS);
-	this.arrayData = new Array(ARRAY_SIZE);
+	this.arrayData = new Array();
 	this.arrayLabels = new Array(ARRAY_SIZE);
 	this.arrayRects = new Array(ARRAY_SIZE);
 	// this.circleObjs = new Array(ARRAY_SIZE);
@@ -243,6 +241,8 @@ Heap.prototype.newArray = function(event)
 	}
 	// this.cmd("Step");
 	// return this.commands;
+	answerArray = [];
+	answerArray = this.arrayData.slice();
 };
 
 Heap.prototype.insertElementBox = function(insertedValue)
@@ -493,7 +493,7 @@ Heap.prototype.removeSmallest = function(dummy)
 	
 	if (this.currentHeapSize == 0)
 	{
-		console.log('Current Heap size = 0')
+		// console.log('Current Heap size = 0')
 		this.cmd("SetText", this.descriptLabel1, "Heap is empty, cannot remove smallest element");
 		return this.commands;
 	}
@@ -562,7 +562,7 @@ Heap.prototype.heapify = function(index)
 
 Heap.prototype.swapWithParent = function()
 {
-	var index = 0
+	var index = this.currentHeapSize;
 
 	for(i=1;i<this.currentHeapSize;i++)
 		if(this.heapStructure[i] == currentHighlightNode)
@@ -692,24 +692,24 @@ function HeapNode(val, id, initialX, initialY)
 
 Heap.prototype.disableUI = function(event)
 {
-	this.insertField.disabled = true;
-	this.insertIndex.disabled = true;
-	this.insertButton.disabled = true;
-	this.removeSmallestButton.disabled = true;
-	this.clearHeapButton.disabled = true;
-	this.buildHeapButton.disabled = true;
-	this.heapifyButton.disabled = true;
+	// this.insertField.disabled = true;
+	// this.insertIndex.disabled = true;
+	// this.insertButton.disabled = true;
+	// this.removeSmallestButton.disabled = true;
+	// this.clearHeapButton.disabled = true;
+	// this.buildHeapButton.disabled = true;
+	// this.heapifyButton.disabled = true;
 }
 
 Heap.prototype.enableUI = function(event)
 {
-	this.insertField.disabled = false;
-	this.insertIndex.disabled = false;
-	this.insertButton.disabled = false;
-	this.removeSmallestButton.disabled = false;
-	this.clearHeapButton.disabled = false;
-	this.buildHeapButton.disabled = false;
-	this.heapifyButton.disabled = false;
+	// this.insertField.disabled = false;
+	// this.insertIndex.disabled = false;
+	// this.insertButton.disabled = false;
+	// this.removeSmallestButton.disabled = false;
+	// this.clearHeapButton.disabled = false;
+	// this.buildHeapButton.disabled = false;
+	// this.heapifyButton.disabled = false;
 }
 
 Heap.prototype.moveLeft = function()
@@ -796,17 +796,74 @@ Heap.prototype.mark = function()
 
 Heap.prototype.submitAnswer = function()
 {
-    this.answers[HeapUtils.getQuestionID()] = document.getElementById(HeapUtils.getAnswerID()).value;
+	// console.log(HeapUtils.getAnswerID());
+	if(HeapUtils.getAnswerID() == 'answeri1')
+		AnswerInsert(44);
+	else if(HeapUtils.getAnswerID() == 'answeri2')
+		AnswerDelete();
+	else if(HeapUtils.getAnswerID() == 'answeri3')
+		AnswerInsert(56);
+	else if(HeapUtils.getAnswerID() == 'answeri4')
+	{
+		var nextindex = answerArray.length;
+		// console.log(nextindex);
+		answerArray[nextindex] = 21;
+		AnswerHeapify(nextindex, Math.floor(nextindex/2));
+	}
+	else if(HeapUtils.getAnswerID() == 'answeri5')
+	{
+		var nextindex = answerArray.length;
+		// console.log(nextindex);
+		answerArray[nextindex] = 23;
+		answerArray[nextindex+1] = 54;
+		answerArray[nextindex+2] = 12;
+		AnswerMakeHeap(nextindex+2);
+	} 
+
+	// console.log('Correct Array');
+	// console.log(answerArray);
+	// console.log('Your Array');
+	// console.log(this.arrayData);
+	// console.log(this.arrayData.length, answerArray.length);
+
+	if(this.arrayData.length == answerArray.length)
+	{
+		var ind;
+		for(ind=1;ind<this.arrayData.length;ind++)
+		{
+			if(this.arrayData[ind] != answerArray[ind])
+			{
+				break;
+			}
+		}
+		if(ind == this.arrayData.length)
+			alert("Correct Answer");
+		else
+			alert("Incorrect Answer");
+	}
+	else
+	{
+		alert("Incorrect Answer");
+	}
+	answerArray = this.arrayData.slice();
+	this.answers[HeapUtils.getQuestionID()] = document.getElementById(HeapUtils.getAnswerID()).value;
 }
 
 Heap.prototype.resetAnswer = function()
 {
+	answerArray = this.arrayData.slice();
     this.answers[HeapUtils.getQuestionID()] = document.getElementById(HeapUtils.getAnswerID()).value = '';
 }
 
 var currentAlg;
 var currentHighlightNode;
 var initCommands;
+var answerArray;
+
+Heap.prototype.returnHighElement = function() //returns the current Highlighted Node
+{
+	return currentHighlightNode;
+}
 
 function init()
 {
@@ -899,12 +956,6 @@ function deleteNodeFromActionListener(node)
         currentAlg.actionElements.splice(index,1);
 }
 
-
-// Heap.prototype.reset = function()
-// {
-// 	this.currentHeapSize = 0;
-// }
-
 Heap.prototype.setIndexHighlight = function(index, highlightVal)
 {
 	// this.cmd("SetHighlight", this.circleObjs[index], highlightVal);
@@ -914,7 +965,7 @@ Heap.prototype.setIndexHighlight = function(index, highlightVal)
 
 Heap.prototype.rename = function(value)
 {
-	var index = 0
+	var index = this.currentHeapSize;
 
 	for(i=1;i<this.currentHeapSize;i++)
 		if(this.heapStructure[i] == currentHighlightNode)
@@ -940,7 +991,7 @@ Heap.prototype.delete = function()
 
 	if (this.currentHeapSize == 0)
 	{
-		console.log('Current Heap size = 0')
+		// console.log('Current Heap size = 0')
 		this.cmd("SetText", this.descriptLabel1, "Heap is empty, cannot remove smallest element");
 		return null;
 	}
@@ -963,11 +1014,54 @@ Heap.prototype.delete = function()
 		this.heapStructure[this.currentHeapSize].parent.left = null;
 	else
 		this.heapStructure[this.currentHeapSize].parent.right = null;
-	this.arrayData[this.currentHeapSize] = null
+	this.arrayData.pop()
 
 	this.cmd("Delete", this.heapStructure[this.currentHeapSize].graphicID);
 	this.currentHeapSize -= 1;
 
 	return deletedNode;
+}
 
+AnswerInsert = function(valueInserted)
+{
+	answerArray[answerArray.length] = valueInserted;
+	// console.log('current index ',(answerArray.length)-1);
+	var currentIndex = answerArray.length-1;
+	while(1)
+	{
+		if(currentIndex == 1) return;
+		parent = Math.floor(currentIndex/2);
+		if(this.answerArray[parent] < this.answerArray[currentIndex]) return;
+		this.answerArray[currentIndex] = this.answerArray[Math.floor(currentIndex/2)];
+		this.answerArray[Math.floor(currentIndex/2)] = valueInserted;
+		currentIndex = parent;	
+	}
+		
+}
+
+AnswerDelete = function()
+{
+	answerArray[1] = answerArray.pop();
+	AnswerHeapify(answerArray.length, 1);
+
+}
+
+AnswerHeapify = function(n, i)
+{
+	while(1)
+	{
+		l = 2*i; r = 2*i+1;
+		if(l>= n) return;
+		min = ((r == n+1 || (answerArray[l] < answerArray[r]) ? l : r));
+		// console.log(answerArray[min], answerArray[i]);
+		if( answerArray[min] > answerArray[i] ) return;
+		// console.log('exchanging');
+		t = answerArray[i]; answerArray[i] = answerArray[min]; answerArray[min] = t;
+		i = min;
+	}
+}
+
+AnswerMakeHeap = function(n)
+{
+	for(i = Math.floor((n-1)/2);i>=1;i-=1) AnswerHeapify(n,i);
 }
