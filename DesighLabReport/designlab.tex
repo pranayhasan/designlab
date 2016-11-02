@@ -1,0 +1,556 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% An example of a lab report write-up.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% This is a combination of several labs that I have done in the past for 
+% Computer Engineering, so it is not to be taken literally, but instead used as 
+% a great starting template for your own lab write up.  When creating this 
+% template, I tried to keep in mind all of the functions and functionality of 
+% LaTeX that I spent a lot of time researching and using in my lab reports and 
+% include them here so that it is fairly easy for students first learning LaTeX
+% to jump on in and get immediate results.  However, I do assume that the 
+% person using this guide has already created at least a "Hello World" PDF 
+% document using LaTeX (which means it's installed and ready to go). 
+%
+% My preference for developing in LaTeX is to use the LaTeX Plugin for gedit in 
+% Linux.  There are others for Mac and Windows as well (particularly MikTeX).  
+% Another excellent plugin is the Calc2LaTeX plugin for the OpenOffice suite.  
+% It makes it very easy to create a large table very quickly.  
+%
+% Professors have different tastes for how they want the lab write-ups done, so 
+% check with the section layout for your class and create a template file for 
+% each class (my recommendation).
+%
+% Also, there is a list of common commands at the bottom of this document.  Use
+% these as a quick reference.  If you'd like more, you can view the "LaTeX Cheat
+% Sheet.pdf" included with this template material. 
+%
+% (c) 2009 Derek R. Hildreth <derek@derekhildreth.com> http://www.derekhildreth.com 
+% This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/1.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[aps,letterpaper,12pt]{revtex4}
+\input kvmacros % For Karnaugh Maps (K-Maps)
+
+\usepackage{graphicx} % For images
+\usepackage{float}    % For tables and other floats
+\usepackage{verbatim} % For comments and other
+\usepackage{amsmath}  % For math
+\usepackage{amssymb}  % For more math
+\usepackage{fullpage} % Set margins and place page numbers at bottom center
+\usepackage{listings} % For source code
+\usepackage{subfig}   % For subfigures
+\usepackage[usenames,dvipsnames]{color} % For colors and names
+\usepackage[pdftex]{hyperref}           % For hyperlinks and indexing the PDF
+\hypersetup{ % play with the different link colors here
+    colorlinks,
+    citecolor=blue,
+    filecolor=blue,
+    linkcolor=blue,
+    urlcolor=blue % set to black to prevent printing blue links
+}
+
+\definecolor{mygrey}{gray}{.96} % Light Grey
+\lstset{ 
+	language=[ISO]C++,              % choose the language of the code ("language=Verilog" is popular as well)
+   tabsize=3,							  % sets the size of the tabs in spaces (1 Tab is replaced with 3 spaces)
+	basicstyle=\tiny,               % the size of the fonts that are used for the code
+	numbers=left,                   % where to put the line-numbers
+	numberstyle=\tiny,              % the size of the fonts that are used for the line-numbers
+	stepnumber=2,                   % the step between two line-numbers. If it's 1 each line will be numbered
+	numbersep=5pt,                  % how far the line-numbers are from the code
+	backgroundcolor=\color{mygrey}, % choose the background color. You must add \usepackage{color}
+	%showspaces=false,              % show spaces adding particular underscores
+	%showstringspaces=false,        % underline spaces within strings
+	%showtabs=false,                % show tabs within strings adding particular underscores
+	frame=single,	                 % adds a frame around the code
+	tabsize=3,	                    % sets default tabsize to 2 spaces
+	captionpos=b,                   % sets the caption-position to bottom
+	breaklines=true,                % sets automatic line breaking
+	breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+	%escapeinside={\%*}{*)},        % if you want to add a comment within your code
+	commentstyle=\color{BrickRed}   % sets the comment style
+}
+
+% Make units a little nicer looking and faster to type
+\newcommand{\Hz}{\textsl{Hz}}
+\newcommand{\KHz}{\textsl{KHz}}
+\newcommand{\MHz}{\textsl{MHz}}
+\newcommand{\GHz}{\textsl{GHz}}
+\newcommand{\ns}{\textsl{ns}}
+\newcommand{\ms}{\textsl{ms}}
+\newcommand{\s}{\textsl{s}}
+
+
+
+% TITLE PAGE CONTENT %%%%%%%%%%%%%%%%%%%%%%%%
+% Remember to fill this section out for each
+% lab write-up.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newcommand{\labno}{}
+\newcommand{\labtitle}{Online facilities for supporting and
+evaluating teaching-learning activities.}
+\newcommand{\authorname}{Yerra Pranay Hasan}
+\newcommand{\classno}{11CS30042}
+\newcommand{\professor}{Prof. Chittaranjan Mandal}
+% END TITLE PAGE CONTENT %%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}  % START THE DOCUMENT!
+
+
+% TITLE PAGE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% If you'd like to change the content of this,
+% do it in the "TITLE PAGE CONTENT" directly above
+% this message
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+\begin{center}
+{\LARGE \textsc{Design Laboratory} \\ \vspace{4pt}}
+{\Large \textsc{\labtitle} \\ \vspace{4pt}} 
+\rule[13pt]{\textwidth}{1pt} \\ \vspace{150pt}
+{\large Min-Heap Data Structure\\ \vspace{10pt}
+{\large By\\ \vspace{10pt}
+{\large \authorname \\ \vspace{10pt}
+[\classno ] \\ \vspace{10pt}
+Guide: \professor \\ \vspace{10pt}
+\today}
+\end{center}
+\end{titlepage}
+% END TITLE PAGE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%No Text Here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{}
+\begin{comment}
+This is a lab template which has a ton of different things which are useful in writing lab write-ups in the Computer Engineering field.  This is demonstrating the comment block. Don't be overwhelmed, it may seem like a lot to take in at a time, but it's worth spending the time learning it.
+\end{comment}
+Data structures and algorithms have operations which are specific to it and can be used to execute various tasks for which it was designed. Generation and evaluation of programming assignments involving these data structures and algorithms can be sufficiently automated to avoid manual verification, which becomes tedious as the class size grows. The aim is to integrate this feature of generation and evaluation in \texttt{WBCM}, wherein student can use it to practice or evaluate himself/herself. \vspace{3mm} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Motivation}
+Automated generation and evaluation of assignments is desired. The following are among the few motives for such a scheme:
+\begin{itemize}
+	\item It is advantageous for the TAs since their efforts of grading gets much lower.
+	\item Students get rapid feedback about what they did wrong(by practicing) and they will get an idea of how many points they’ll earn at the end when they actually attempt a quiz.
+	\item Lenient and strict TAs are now not a problem since the evaluation is automated and hence consistent.
+	\item Plagiarism chances have drastically reduced.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Challenges}
+We present an inexhaustive list of challenges below:
+\begin{enumerate}
+\item \texttt{Building an intuitive interface:} Cycles of feedback and implementation will be required to settle on an interface intuitive enough to use.
+\item \texttt{Correction Scheme:} We are recording the moves performed by the student to answer a question. But these moves are only for the students enabling to check themselves without resetting and repeating the whole process of answering that question. So, the recorded moves won't be used for evaluation. The evaluation is done by matching the final data-structure created by the student and the correct data-structure simulated by the machine.
+\item \texttt{Initial Data Structure Generation Scheme:} The initially data-structure is randomly generated using a seed with a predefined range on the number of elements. A seed is set so that the same data-structure is displayed to all the users at that moment. This can be customized as per a test/practice session thereby generating different random sequences for different students.
+\item \texttt{Fixed set vs large numbers of initial DS:} The can be customized easily after a final decision.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Implementation}
+	The implementation of Binary Search Tree was built and based on the same interface the following data structure Heap has been built. Other data structure AVL tree also is being built.
+
+\begin{figure}[H]
+\centering
+{\label{fig:MinHeap}\includegraphics[height=6cm,width=10cm]{minheap.png}}   
+\caption{Min Heap}
+{\label{fig:OperationMenu}\includegraphics[height=9cm,width=12cm\textwidth]{menu.png}}
+\caption{Operation Menu}
+\label{fig:minheap}    
+\end{figure}
+
+\subsection{Overview and Operations}
+	The student could left click at the current highlighted node and choose among the operations provided. The move will be recorded in the text box allotted so as to enable the student to self check his/her own moves.
+
+\subsection{Traversal Operations}
+Miscellaneous question scheme deals with traversal operations.
+\begin{enumerate}
+\item Click on highlighted node and select \textbf{Move Left} to visit the left child (if any).
+\item Click on highlighted node and select \textbf{Move Right} to visit the Right child (if any).
+\item Click on highlighted node and select \textbf{Move to Parent} to visit the Parent (if any).
+\item Click on highlighted node and select \textbf{Mark} to mark the present node(as visited for example).
+\item Click on highlighted node and select \textbf{Swap to Parent} to swap the current highlighted node with the parent node(if any).
+\item Click on highlighted node and select \textbf{Rename} to enter the new value of the highlighted node.
+\end{enumerate}
+
+
+\subsection{Insert Operation}
+\begin{enumerate}
+\item Right click on any node and click on \textbf{Insert} and insert the value of the new node in the prompt. This inserts a new node at the end of the heap.
+\item Then use \textbf{Move to Parent} to place the node such that the resultant structure satisfies heap structuring property. 
+\end{enumerate}
+
+Below figures demonstrate insertion of 44 into the Min Heap.
+	% You can refer to this set of images by using \ref{fig:oscil}.  ie "please refer to Figure \ref{fig:oscil}."
+	% You can refer to a specific subimage by using \ref{fig:Per6A}. ie "please refer to Figure \ref{fig:Per6A}."
+   % I prefer the quality of a .png image, but you may use other extensions such as .jpg.
+\begin{figure}[H]
+\centering
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i1.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i2.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i3.png}}\\
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i4.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i5.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i6.png}}\\
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i7.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i8.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=5cm,width=4.5cm]{i9.png}}\\
+\subfloat[]{\label{fig:Per6A}\includegraphics[height=4cm,width=4.5cm]{i10.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6A}\includegraphics[width=6cm]{i11.png}}
+\caption{Demonstration of Inserting 44 into Min Heap}
+\label{fig:insertion}    
+\end{figure}
+
+\subsection{Delete Operation}
+\begin{enumerate}
+\item Right click on any node and click on \textbf{Delete}. This deletes the last node at the end of the heap.
+\item Then using \textbf{Rename}, rename the root node with the value of the deleted node. Now using \textbf{Swap to Parent} move the root element to the bottom so that heap ordering is satisfied.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\subfloat[]{\label{fig:Per6B}\includegraphics[width=5cm]{d1.png}}	\hspace{0.1cm}  
+\subfloat[]{\label{fig:Per6B}\includegraphics[width=5cm]{d2.png}}\hspace{0.1cm}  
+\subfloat[]{\label{fig:Per6B}\includegraphics[width=5cm]{d3.png}}\\
+\subfloat[]{\label{fig:Per6B}\includegraphics[width=5cm]{d4.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6B}\includegraphics[width=5cm]{d5.png}}\hspace{0.1cm}
+\subfloat[]{\label{fig:Per6B}\includegraphics[width=5cm]{d7.png}}
+\caption{Demonstration of Deleting top element in Min Heap (few steps after (e) skipped)}
+\label{fig:deletion}    
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{CODE STRUCTURE}
+This section will consist of the important code blocks which were changed in order to meet the requirements of the HEAP Data structure.\\
+The code for Min Heap can be found \href{https://github.com/pranayhasan/designlab/}{here} and
+the running version can be viewed in browser \href{https://rawgit.com/pranayhasan/designlab/master/Heap.html?scheme=1}{here}
+\vspace{5mm}
+\lstinputlisting{code.c}
+\vspace{3mm}
+
+% IF YOU'D RATHER TYPE THE CODE, OR HAVE A SMALLER BLOCK OF CODE, USE THIS:
+%\begin{lstlisting}
+%if(something)
+%	do this
+%else
+%	do this
+%\end{lstlisting}
+
+%% THIS IS FROM A DIFFERENT CLASS, BUT DEMONSTRATES MATH MODE WELL
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Auto Evaluation}
+Auto Evaluation is not 100\% possible as a lot of different kinds of questions are possible on heap. So auto-evaluation is possible only for a basic set of operations such as Insert, Delete, MakeHeap and Heapify Node. These set of methods have been implemented (as can be seen in Evaluation Methods in the Code Structure of Section III). So some basic questions are framed to demonstrate these. Once submit is clicked for each of these questions evaluation is done automatically.\\
+
+The method of auto-evaluation is done by comparing the final data structures, one generated by the student and other simulated by machine in the background. The moves shown are just for reference of the student and not for evaluation. This is because in case of moves, most of the traversal operations have to be simulated which is an extra overhead in computation. The moves method also creates a lot of unnecessary bugs.\\
+
+
+%This part of the laboratory was done for \href{http://www.byui.edu/catalog/2004-2005/class.asp1075.htm}{Feedback Control}.  Most of this laboratory's calculations were completed and compiled by the folks at Quanser (the manufacturer of the inverted pendulum) and will give the lab a good starting place.  Below are the state equation and gain values used initially in the lab:
+%	\[
+%	\begin{bmatrix}
+%	\dot{\alpha} \\
+%	\ddot{\alpha} \\
+%	\dot{\theta} \\
+%	\ddot{\theta} \\
+%	\end{bmatrix}
+%	=
+%	\begin{bmatrix}
+%	0 & 1 & 0 & 0 \\
+%	81.7 & 0 & 0 & -13.9 \\
+%	0 & 0 & 0 & 1 \\
+%	39.7 & 0 & 0 & -14.4 \\
+%	\end{bmatrix}
+%	\begin{bmatrix}
+%	\alpha \\
+%	\dot{\alpha} \\
+%	\theta \\
+%	\dot{\theta} \\
+%	\end{bmatrix}
+%	+
+%	\begin{bmatrix}
+%	0 \\ 
+%	24.5 \\
+%	0 \\ 
+%	25.4 \\
+%	\end{bmatrix}
+%	V
+%	\]
+%
+%	\[
+%	K  = 
+%	\begin{bmatrix}
+%	21 & 2.8 & -2.2 & -2.0 \\
+%	\end{bmatrix}
+%	\]
+%
+%Other values, such as the $\frac{\mbox{Volts}}{\mbox{Degree}}$ and $\frac{\mbox{Degrees}}{\mbox{Volt}}$ were obtained by first determining the max angle of the pendulum on both extreme sides.
+%
+%Using the max angles from above, these values were determined:
+%	\[
+%	\begin{array}{l l}
+%		\alpha = 0.062 \frac{\mbox{Volts}}{\mbox{Degree}} \\ \\
+%		\alpha = 15.105 \frac{\mbox{Degrees}}{\mbox{Volt}} \\
+%	\end{array}
+%	\]
+%
+%I would also like to add that in order to calibrate $\alpha$ to get a perfect vertical $= 0$, a value of $0.09$ needed to be added.  The same applies to $\theta$ where $0.322$ needs to be added.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{DC Motor Transfer Function and Parameters}
+%
+%Definitions:
+%	\begin{align*}
+%		\theta(t) =  Angular Position \\
+%		\dot{\theta}(t) =  Angular Velocity \\
+%		\triangle t = t_{10\%} - t_{90\%} \\
+%		90\% = e^{-t_{10\%}/\tau} \\
+%		10\% = e^{-t_{90\%}/\tau} \\ 
+%	\end{align*}
+%
+%The Math:
+%	\begin{align*}
+%		\frac{s\theta(s)}{V_{a}(s)} = \frac{K}{s+P} \\
+%		\mbox{Let}\ V_{a}(s) = \frac{V_{0}}{s} \\  % If you'd like to have a space following any command, add "\" to the end as shown here.
+%		s\theta(s) = \frac{KV_{0}}{(S+P)S} = \frac{KV_{0}}{\frac{P}{S}} - \frac{\frac{KV_{0}}{P}}{s+P} \\
+%		L^{-1} \Rightarrow \dot{\theta}(t) = \frac{KV_{0}}{P}(1-e^{-t/(1/P)}) \\
+%		\dot{\theta}(t) = (\dot{\theta}_{i} - \dot{\theta}_{f})e^{-pt} + \dot{\theta}_{f} \\
+%	\end{align*}
+%
+%Final equations:
+%	\begin{align}
+%		\label{thetadot}\dot{\theta}_{f} = \frac{KV_{0}}{P} \\
+%		\label{equ:tau}\frac{1}{P} = \tau = \frac{\triangle t}{ln(9)}
+%	\end{align}
+%
+%Graphically (Refer to Equation \ref{thetadot} and Equation \ref{equ:tau}) :
+%	% Drawn and exported to png using Inkscape.
+%	\begin{figure}[h]
+%		\begin{center}
+%			\includegraphics[width=0.33\textwidth]{graph.png}
+%		\end{center}
+%	\label{graph}
+%	\end{figure}
+%
+%% AGAIN, ANOTHER EXAMPLE FROM A DIFFERENT CLASS WHICH DEMONSTRasdATES KMAPS AND TABLES NICELY.
+%\newpage % I added this after viewing the completed pdf and decided to make this cosmetic change
+%This section consists of tables and reductions which were used in this laboratory exercise.
+%
+%% This table was generated using the Calc2LaTeX macro which I mentioned earlier.
+%% You'll need OpenOffice installed and you'll have to download the macro online.
+%% If you're interested, I have a guide on how to set this up and use it on my
+%% blog.  http://www.derekhildreth.com/blog  Search for "LaTeX".  You'll find it.
+%	\begin{table}[htbp]
+%	\begin{center}
+%		\begin{tabular}{|ccc|cc|}
+%			\hline
+%			\textbf{PS} & \textbf{D} & \textbf{N} & \textbf{NS} & \textbf{P} \\ \hline
+%			\$0.00 & 0 & 0 & \$0.00 & 0 \\
+%			 & 0 & 1 & \$0.05 & 0 \\ 
+%			 & 1 & 0 & \$0.10 & 0 \\
+%			 & 1 & 1 & -- & -- \\ \hline
+%			\$0.05 & 0 & 0 & \$0.05 & 0 \\ 
+%			 & 0 & 1 & \$0.10 & 0 \\ 
+%			 & 1 & 0 & \$0.15 & 0 \\ 
+%			 & 1 & 1 & -- & -- \\ \hline
+%			\$0.10 & 0 & 0 & \$0.10 & 0 \\ 
+%			 & 0 & 1 & \$0.15 & 0 \\ 
+%			 & 1 & 0 & \$0.15 & 0 \\ 
+%			 & 1 & 1 & -- & -- \\ \hline
+%			\$0.15 & -- & -- & \$0.15 & 1 \\ \hline
+%			\end{tabular}
+%	\end{center}
+%	\caption{Symbolic Transition Table}
+%	\label{symbolic}
+%	\end{table}
+%
+%	\begin{table}[H]
+%		\centering
+%		\subfloat[D1 = $Q_{1}$+D+$Q_{0}$N] % Caption
+%			{
+%				\karnaughmap{4}{D1:}{ {$Q_{1}$} {$Q_{0}$} {D} {N} }{001X011X111X111X}{}  % See the included kvdoc.pdf file for more details 
+%			} \hspace{10mm} % seperate them a bit
+%		\subfloat[D0 = $\Bar{Q_{0}}$N + $Q_{0}\Bar{N}$ + $Q_{1}$N + $Q_{1}$D] % Caption
+%			{
+%				\karnaughmap{4}{D0:}{ {$Q_{1}$} {$Q_{0}$} {D} {N} }{010X101X011X111X}{}
+%			}
+%	  \caption{Karnaugh maps and the simplified results of the logic.}
+%	  \label{fig:kmaps}
+%	\end{table}
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Conclusion}
+Marks Distribution:
+\begin{enumerate}
+\item \textbf{Interface:}                             100/100\\
+		Array+Tree Structure
+\item \textbf{Traversal Operations:}                  90/100\\
+		Rename, Swap To Parent
+\item \textbf{Heap Operations:}                       100/100\\
+		Insert, Delete, Heapify, MakeHeap
+\item \textbf{Admin Mode:}                            95/100\\
+		All Heap operations visualisations
+\item \textbf{Auto Evaluation:}                        90/100\\
+		Insert, Delete, Heapify, MakeHeap (Can be improved using NLP techniques and also by keeping a mapping of Questions)\\	
+\end{enumerate}
+
+
+\end{document} % DONE WITH DOCUMENT!
+
+
+%%%%%%%%%%
+PERSONAL FAVORITE LAB WRITE-UP STRUCTURE
+%%%%%%%%%%
+\section{Introduction}
+	% No Text Here
+	\subsection{Purpose}
+		% Lab objective
+	\subsection{Equipment}
+		% Any and all equipment used (specific!)
+	\subsection{Procedure}
+		% Overview of the procedure taken (not-so-specific!)
+\newpage
+\section{Schematic Diagrams}
+	% Any schematics, screenshots, block
+   % diagrams used.  Possibly photos or
+	% images could go here as well.
+\newpage
+\section{Experiment Data}
+	% Depending on lab, program code would be 
+	% included here without the Estimated and 
+	% Actual Results.
+	\subsection{Estimated Results}
+		% Calculated. What it should be.
+	\subsection{Actual Results}
+		% Measured.  What it actually was.
+\newpage
+\section{Discussion \& Conclusion}
+	% 3 Paragraphs:
+		% Restate the objective of the lab
+		% Discuss personal trials, errors, and difficulties
+		% Conclude the lab
+
+
+%%%%%%%%%%%%%%%%
+COMMON COMMANDS:
+%%%%%%%%%%%%%%%%
+% IMAGES
+begin{figure}[H]
+   \begin{center}
+      \includegraphics[width=0.6\textwidth]{RTL_SCHEM.png}
+   \end{center}
+\caption{A screenshot of the RTL Schematics produced from the Verilog code.}
+\label{RTL}
+\end{figure}
+
+% SUBFIGURES IMAGES
+\begin{figure}[H]
+  \centering
+  \subfloat[LED4 Period]{\label{fig:Per4}\includegraphics[width=0.4\textwidth]{period_led4.png}} \\                
+  \subfloat[LED5 Period]{\label{fig:Per5}\includegraphics[width=0.4\textwidth]{period_led5.png}}
+  \subfloat[LED6 Period]{\label{fig:Per6}\includegraphics[width=0.4\textwidth]{period_led6.png}}
+  \caption{Period of LED blink rate captured by osciliscope.}
+  \label{fig:oscil}
+\end{figure}
+
+% INSERT SOURCE CODE
+\lstset{language=Verilog, tabsize=3, backgroundcolor=\color{mygrey}, basicstyle=\small, commentstyle=\color{BrickRed}}
+\lstinputlisting{MODULE.v}
+
+% TEXT TABLE
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|c|l|}
+	x & x & x & x \\ \hline
+	x & x & x & x \\
+	x & x & x & x \\ \hline
+\end{tabular}
+\caption{Caption}
+\label{label}
+\end{center}
+\end{table}
+
+% MATHMATICAL ENVIRONMENT
+$ 8 = 2 \times 4 $
+
+% CENTERED FORMULA
+\[  \]
+
+% NUMBERED EQUATION
+\begin{equation}
+	
+\end{equation}
+
+% ARRAY OF EQUATIONS (The splat supresses the numbering)
+\begin{align*}
+	
+\end{align*}
+
+% NUMBERED ARRAY OF EQUATIONS
+\begin{align}
+	
+\end{align}
+
+% ACCENTS
+\dot{x} % dot
+\ddot{x} % double dot
+\bar{x} % bar
+\tilde{x} % tilde
+\vec{x} % vector
+\hat{x} % hat
+\acute{x} % acute
+\grave{x} % grave
+\breve{x} % breve
+\check{x} % dot (cowboy hat)
+
+% FONTS
+\mathrm{text} % roman
+\mathsf{text} % sans serif
+\mathtt{text} % Typewriter
+\mathbb{text} % Blackboard bold
+\mathcal{text} % Caligraphy
+\mathfrak{text} % Fraktur
+
+\textbf{text} % bold
+\textit{text} % italic
+\textsl{text} % slanted
+\textsc{text} % small caps
+\texttt{text} % typewriter
+\underline{text} % underline
+\emph{text} % emphasized
+
+\begin{tiny}text\end{tiny} % Tiny
+\begin{scriptsize}text\end{scriptsize} % Script Size
+\begin{footnotesize}text\end{footnotesize} % Footnote Size
+\begin{small}text\end{small} % Small
+\begin{normalsize}text\end{normalsize} % Normal Size
+\begin{large}text\end{large} % Large
+\begin{Large}text\end{Large} % Larger
+\begin{LARGE}text\end{LARGE} % Very Large
+\begin{huge}text\end{huge}   % Huge
+\begin{Huge}text\end{Huge}   % Very Huge
+
+
+% GENERATE TABLE OF CONTENTS AND/OR TABLE OF FIGURES
+% These seem to have some issues with the "revtex4" document class.  To use, change
+% the very first line of this document to "article" like this:
+% \documentclass[aps,letterpaper,10pt]{article}
+\tableofcontents
+\listoffigures
+\listoftables
+
+% INCLUDE A HYPERLINK OR URL
+\url{http://www.derekhildreth.com}
+\href{http://www.derekhildreth.com}{Derek Hildreth's Website}
+
+% FOR MORE, REFER TO THE "LINUX CHEAT SHEET.PDF" FILE INCLUDED!
